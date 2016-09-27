@@ -1,0 +1,58 @@
+$separaterWidth: 1px;
+$scale: 30px;
+$gameBorder: 2px;
+* {
+  margin:0;
+  padding:0;
+}
+#game {
+  position: relative;
+}
+#board {
+  position: relative;
+}
+#fallerWrap {
+  z-index:100;
+  position: absolute;
+  top: $gameBorder; left: $gameBorder;
+}
+#faller {
+  position: absolute;
+  transition: all .1s ease;
+}
+.block {
+  position: absolute;
+  width: $scale; height: $scale;
+
+}
+table {
+  border: $gameBorder solid black;
+  border-collapse: collapse;
+}
+td {
+  width: $scale;
+  height: $scale;
+  border: $separaterWidth solid black;
+}
+
+.red {
+  background-color: red;
+}
+.purple {
+  background-color: purple;
+}
+.blue {
+  background-color: blue;
+}
+.orange {
+  background-color: orange;
+}
+.yellow {
+  background-color: yellow;
+}
+.green {
+  background-color: lime;
+}
+.cyan {
+  background-color: cyan;
+}

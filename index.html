@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html >
+  <head>
+    <title>Tetris - Angular</title>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+    <script src="app.js"></script>
+    <link rel="stylesheet" href="tetris.css">
+  </head>
+  <body>
+    <div id="wrapper">
+      <div id="game" ng-app="tetrisGame">
+        <div id="CtrlLayer" ng-controller="gameControls"></div>
+        <div id="fallerWrap" ng-controller="fallerController">
+          <div id="faller" ng-style="{left: applyScale(faller.position.x), top: applyScale(faller.position.y)}">
+            <div class="block"
+              ng-repeat="point in faller.points"
+              ng-style="{left: applyScale(point.x), top: applyScale(point.y, true)}"
+              ng-class="faller.color">
+            </div>
+          </div>
+
+        </div>
+        <div id="board" ng-controller="gridController">
+          <div style="float:right">
+            width: <input type="text" name="width" ng-model="newWidth">
+            height: <input type="text" name="height" ng-model="newHeight">
+
+            <button ng-click="grid.gen(newWidth, newHeight)">set</button>
+
+            <pre>width: {{grid.width}}, height: {{grid.height}}</pre>
+            <pre>{{grid.content.length}}</pre>
+          </div>
+          <table>
+            <tr ng-repeat="(i, row) in grid.content track by $index">
+              <td ng-repeat="(j, cell) in row track by $index" ng-class="cell" ng-click="grid.set({x: j, y: i}, 'red')"></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
