@@ -1,7 +1,7 @@
 var app = angular.module('tetrisGame', []);
 
 
-app.controller('gridController', ['$scope', 'grid', 'piece', function($scope, grid, Piece) {
+app.controller('gridController', ['$scope', 'grid', function($scope, grid) {
   $scope.grid = grid;
 
 }]);
@@ -94,49 +94,62 @@ app.factory('grid', function(){
   return grid;
 });
 
-app.factory('piece', function(){
+
+
+
+app.factory('faller', ['grid', function(grid) {
+  var faller = {};
+
+  faller.reFall = function(piece, start) {
+    this.position = {x:Math.floor((grid.width - 1)/2), y:piece.topOffset};
+    this.points = piece.points;
+    this.color = piece.color;
+    this.spread = piece.spread;
+    this.moveRight = piece.moveRight;
+    this.moveLeft = piece.moveLeft;
+    this.moveDown = piece.moveDown;
+    this.rotateCW = piece.rotateCW;
+  }
+
+  return faller;
+}]);
+
+app.factory('pieceManager', [function() {
+  var manager = {};
+
   function Piece(points, color) {
     this.points = points;
     this.color = color;
-  }
-
-  return Piece;
-});
-
-
-app.factory('faller', ['grid', 'piece', function(grid, Piece) {
-  var faller = {};
-  faller.reFall = function(piece) {
-    this.points = piece.points;
-    this.color = piece.color;
-    this.position = {x:Math.floor((grid.width - 1)/2), y:this.getTopOffset()};
+    this.topOffset = this.getTopOffset();
     this.spread = this.getSpread();
-
-  };
-  faller.getTopOffset = function() {
+  }
+  Piece.prototype.getTopOffset = function() {
     return Math.max.apply(null, this.points.map(function(curr){
       return curr.y;
     }));
   };
-  faller.getSpread = function() {
+  Piece.prototype.getSpread = function() {
     return Math.max.apply(null, this.points.map(function(curr){
-      return Math.max(curr.x, curr.y);
+      return Math.max(
+        Math.abs(curr.x),
+        Math.abs(curr.y)
+      );
     }));
   };
-  faller.moveRight = function() {
+  Piece.prototype.moveRight = function() {
     this.position.x++;
     return this;
   };
-  faller.moveLeft = function() {
+  Piece.prototype.moveLeft = function() {
     this.position.x--;
     return this;
   };
-  faller.moveDown = function(n) {
+  Piece.prototype.moveDown = function(n) {
     if(typeof n === "undefined") var n = 1;
     this.position.y += n;
     return this;
   };
-  faller.rotateCW = function() {
+  Piece.prototype.rotateCW = function() {
     this.points = this.points.map(function(pt){
       return {x: pt.y, y: (-1)*pt.x};
     });
@@ -144,18 +157,34 @@ app.factory('faller', ['grid', 'piece', function(grid, Piece) {
   };
 
 
+  function EvenPiece(points, color) {
+    Piece.call(this, points, color);
+  }
+  /* EvenPiece inherits from Piece */
+  EvenPiece.prototype = Object.create(Piece.prototype);
 
-  return faller;
-}]);
+  EvenPiece.prototype.getSpread = function() {
+    return Math.max.apply(null, this.points.map(function(curr){
+      return Math.max(
+        Math.ceil(Math.abs(curr.x - 0.5)),
+        Math.ceil(Math.abs(curr.y + 0.5))
+      );
+    }));
+  };
+  EvenPiece.prototype.rotateCW = function() {
+    this.points = this.points.map(function(pt){
+      return {x: pt.y + 1, y: (-1)*pt.x};
+    });
+    return this;
+  };
 
-app.factory('pieceManager', ['piece', function(Piece) {
-  var manager = {};
+
 
   manager.pieceTypes = [
     new Piece(
       [{x:0, y:0}, {x:-1, y:0}, {x:1, y:0},{x:0, y:1}],
       'purple'),
-    new Piece(
+    new EvenPiece(
       [{x:0,y:0}, {x:-1,y:0}, {x:1,y:0}, {x:2,y:0}],
       'cyan'),
     new Piece(
@@ -164,8 +193,8 @@ app.factory('pieceManager', ['piece', function(Piece) {
     new Piece(
       [{x:0,y:0}, {x:-1,y:0}, {x:1,y:0}, {x:1,y:1}],
       'orange'),
-    new Piece(
-      [{x:0,y:0}, {x:1,y:0}, {x:0,y:1}, {x:1,y:1}],
+    new EvenPiece(
+      [{x:0,y:0}, {x:1,y:0}, {x:0,y:-1}, {x:1,y:-1}],
       'yellow'),
     new Piece(
       [{x:0,y:0}, {x:-1,y:0}, {x:0,y:1}, {x:1,y:1}],
@@ -233,6 +262,8 @@ app.factory('gameManager', ['grid', 'faller', 'pieceManager', '$document', '$tim
     faller.moveDown(n);
   }
 
+
+
   game.restart = function() {
     pieceManager.queuePiece(3);
     faller.reFall(pieceManager.getNextPiece());
@@ -263,7 +294,9 @@ app.factory('gameManager', ['grid', 'faller', 'pieceManager', '$document', '$tim
   };
 
   game.findCollision = function(piece) {
+    console.log(piece);
     var pos = piece.position, points = piece.points, pt, vec;
+
     for(var i = 0; i < points.length; i++) {
       pt = points[i];
       vec = {x: pos.x + pt.x, y: pos.y - pt.y};

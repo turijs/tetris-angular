@@ -28,6 +28,7 @@ $gameBorder: 2px;
 table {
   border: $gameBorder solid black;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 td {
   width: $scale;
