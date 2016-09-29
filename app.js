@@ -149,9 +149,10 @@ app.factory('pieceManager', [function() {
     this.position.y += n;
     return this;
   };
-  Piece.prototype.rotateCW = function() {
+  Piece.prototype.rotateCW = function(center) {
+    center = center || {x:0, y:0};
     this.points = this.points.map(function(pt){
-      return {x: pt.y, y: (-1)*pt.x};
+      return {x: pt.y - center.y + center.x, y: center.x - pt.x + center.y};
     });
     return this;
   };
@@ -171,9 +172,11 @@ app.factory('pieceManager', [function() {
       );
     }));
   };
-  EvenPiece.prototype.rotateCW = function() {
+  EvenPiece.prototype.rotateCW = function(center) {
+    center = center || {x:0.5, y:-0.5};
+    
     this.points = this.points.map(function(pt){
-      return {x: pt.y + 1, y: (-1)*pt.x};
+      return {x: pt.y - center.y + center.x, y: center.x - pt.x + center.y};
     });
     return this;
   };
@@ -294,7 +297,7 @@ app.factory('gameManager', ['grid', 'faller', 'pieceManager', '$document', '$tim
   };
 
   game.findCollision = function(piece) {
-    console.log(piece);
+
     var pos = piece.position, points = piece.points, pt, vec;
 
     for(var i = 0; i < points.length; i++) {
