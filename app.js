@@ -108,6 +108,7 @@ app.factory('faller', ['grid', function(grid) {
     this.moveRight = piece.moveRight;
     this.moveLeft = piece.moveLeft;
     this.moveDown = piece.moveDown;
+    this.jumpTo = piece.jumpTo;
     this.rotateCW = piece.rotateCW;
   }
 
@@ -149,9 +150,16 @@ app.factory('pieceManager', [function() {
     this.position.y += n;
     return this;
   };
-  Piece.prototype.rotateCW = function() {
+  Piece.prototype.jumpTo = function(relativePos) {
+    /* relativePos has positive y as up */
+    this.position.x += relativePos.x;
+    this.position.y -= relativePos.y;
+    return this;
+  };
+  Piece.prototype.rotateCW = function(center) {
+    center = center || {x:0, y:0};
     this.points = this.points.map(function(pt){
-      return {x: pt.y, y: (-1)*pt.x};
+      return {x: pt.y - center.y + center.x, y: center.x - pt.x + center.y};
     });
     return this;
   };
@@ -171,10 +179,13 @@ app.factory('pieceManager', [function() {
       );
     }));
   };
-  EvenPiece.prototype.rotateCW = function() {
+  EvenPiece.prototype.rotateCW = function(center) {
+    center = center || {x:0.5, y:-0.5};
+
     this.points = this.points.map(function(pt){
-      return {x: pt.y + 1, y: (-1)*pt.x};
+      return {x: pt.y - center.y + center.x, y: center.x - pt.x + center.y};
     });
+    
     return this;
   };
 
@@ -248,11 +259,21 @@ app.factory('gameManager', ['grid', 'faller', 'pieceManager', '$document', '$tim
     faller.moveDown();
   };
   game.rot = function() {
-    var ghost = game.ghostFaller().rotateCW();
-    if(game.findCollision(ghost)) {
+    var normalRot = game.ghostFaller().rotateCW()
+    if(!game.findCollision( normalRot )) {
+      faller.rotateCW();
       return;
     }
-    faller.rotateCW();
+    /* Try rotating about each individual point; this can create "wall kicks" */
+    for(var i = 0; i < faller.points.length; i++) {
+      var offsetRot = game.ghostFaller().rotateCW(faller.points[i])
+      if(!game.findCollision( offsetRot )) {
+        /* find offset */
+        var offset = {x: offsetRot.points[0].x - normalRot.points[0].x, y: offsetRot.points[0].y - normalRot.points[0].y}
+        faller.jumpTo(offset).rotateCW();
+        return
+      }
+    }
   };
   game.hard = function() {
     var ghost = game.ghostFaller(), n = 0;
@@ -268,7 +289,6 @@ app.factory('gameManager', ['grid', 'faller', 'pieceManager', '$document', '$tim
     pieceManager.queuePiece(3);
     faller.reFall(pieceManager.getNextPiece());
 
-    //grid.absorb(faller);
 
     this.tickSpeed = 1;
     this._TID = $interval(this.tick, 1000);
@@ -294,7 +314,7 @@ app.factory('gameManager', ['grid', 'faller', 'pieceManager', '$document', '$tim
   };
 
   game.findCollision = function(piece) {
-    console.log(piece);
+
     var pos = piece.position, points = piece.points, pt, vec;
 
     for(var i = 0; i < points.length; i++) {
