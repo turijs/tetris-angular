@@ -6,33 +6,39 @@ app.controller('gridController', ['$scope', 'grid', function($scope, grid) {
 
 }]);
 
-app.controller('fallerController', ['$scope', 'faller','gameManager', '$document', function($scope, faller, gameManager, $document){
+app.controller('fallerController', ['$scope', 'faller','gameManager', '$document', function($scope, faller, game, $document){
   var scale = 30;
   var borderWidth = 1;
-  var keyMap = {
-    32: "hard",
-    37: "left",
-    38: "rot",
-    39: "right",
-    40: "down"
-  };
-  $document.bind("keydown", function(e) {
-    var c = e.keyCode, action;
-    if(action = keyMap[c]) {
-      e.preventDefault();
-      //console.log("Defined!");
-      $scope.$apply(gameManager[action]);
-
+  $scope.controls = {
+    32: {
+      fn: game.hard
+    },
+    37: {
+      fn: game.left,
+      repeatDelay: 80,
+      initialRepeatDelay: 200
+    },
+    38: {
+      fn: game.rot
+    },
+    39: {
+      fn: game.right,
+      repeatDelay: 80,
+      initialRepeatDelay: 200
+    },
+    40: {
+      fn: game.down,
+      repeatDelay: 100
     }
-
-
-  });
+  };
 
   $scope.faller = faller;
 
   $scope.applyScale = function(n, neg) {
     return (n*(scale + borderWidth)*(neg ? -1 : 1)) + 'px';
-  }
+  };
+
+
 }]);
 
 app.controller('gameControls', ['$scope', 'gameManager', function($scope, game) {
@@ -185,7 +191,7 @@ app.factory('pieceManager', [function() {
     this.points = this.points.map(function(pt){
       return {x: pt.y - center.y + center.x, y: center.x - pt.x + center.y};
     });
-    
+
     return this;
   };
 
@@ -337,4 +343,75 @@ app.factory('gameManager', ['grid', 'faller', 'pieceManager', '$document', '$tim
 
 
   return game;
+}]);
+
+app.directive('kbControl', ['$document', '$parse', function($document, $parse) {
+  return {
+    restrict: 'A',
+    link: link,
+  };
+
+  function link(scope, element, attrs) {
+    var keys = scope.$eval(attrs.kbControl);
+    var timers = {};
+    var enabled = true;
+
+    enable();
+
+    /* enable or disable these keyboard controls based on the value of the kbControlEnabled (bool) attribute */
+    if('kbControlEnabled' in attrs) {
+      console.log("attribute exists!");
+      scope.$watch($parse(attrs.kbControlEnabled), function(newVal, oldVal){
+        if(!newVal && enabled)
+          disable();
+        else if(newVal && !enabled)
+          enable();
+      });
+    }
+
+    function enable() {
+      $document.on("keydown", keyDownHandler);
+      $document.on("keyup", keyUpHandler);
+      enabled = true;
+    }
+
+    function disable() {
+      $document.off("keydown", keyDownHandler);
+      $document.off("keyup", keyUpHandler);
+      enabled = false;
+    }
+
+    function keyDownHandler(event) {
+      var key = (event || window.event).keyCode;
+      if (!(key in keys))
+        return true;
+      if (!(key in timers)) {
+        timers[key] = null;
+        var keyObj = keys[key];
+        repeatAction(keyObj.fn, keyObj.repeatDelay, keyObj.initialRepeatDelay);
+      }
+      //////////////////////
+      event.preventDefault();
+      return false;
+      /////////////////////
+      function repeatAction(action, repeatDelay, initialRepeatDelay) {
+        scope.$apply(action);
+
+        if(!repeatDelay) return;
+
+        var delay = initialRepeatDelay || repeatDelay;
+        timers[key] = setTimeout(repeatAction.bind(null, action, repeatDelay), delay);
+      }
+    }
+
+    function keyUpHandler(event) {
+        var key = (event || window.event).keyCode;
+        if (key in timers) {
+            if (timers[key] !== null)
+                clearTimeout(timers[key]);
+            delete timers[key];
+        }
+    };
+
+  }
 }]);

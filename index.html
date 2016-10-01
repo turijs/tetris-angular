@@ -12,7 +12,10 @@
       <div id="game" ng-app="tetrisGame">
         <div id="CtrlLayer" ng-controller="gameControls"></div>
         <div id="fallerWrap" ng-controller="fallerController">
-          <div id="faller" ng-style="{left: applyScale(faller.position.x), top: applyScale(faller.position.y)}">
+          
+          <div id="faller"
+            ng-style="{left: applyScale(faller.position.x), top: applyScale(faller.position.y)}"
+            kb-control="controls">
             <div class="block"
               ng-repeat="point in faller.points"
               ng-style="{left: applyScale(point.x), top: applyScale(point.y, true)}"
@@ -27,6 +30,7 @@
             height: <input type="text" name="height" ng-model="newHeight">
 
             <button ng-click="grid.gen(newWidth, newHeight)">set</button>
+
 
             <pre>width: {{grid.width}}, height: {{grid.height}}</pre>
             <pre>{{grid.content.length}}</pre>
