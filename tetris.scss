@@ -14,26 +14,36 @@ $gameBorder: 2px;
 #fallerWrap {
   z-index:100;
   position: absolute;
-  top: $gameBorder; left: $gameBorder;
+  top: $separaterWidth; left: $separaterWidth;
 }
-#faller {
+  #faller {
+    position: absolute;
+    transition: all .1s ease;
+  }
+#viewGrid {
+  z-index:50;
   position: absolute;
-  transition: all .1s ease;
+  top: $separaterWidth; left: $separaterWidth;
 }
 .block {
   position: absolute;
   width: $scale; height: $scale;
 
 }
-table {
-  border: $gameBorder solid black;
-  border-collapse: collapse;
-  table-layout: fixed;
+#BGGrid {
+  border-right: $separaterWidth solid black;
+  border-bottom: $separaterWidth solid black;
+  width: 100%;
+  height: 100%;
 }
-td {
-  width: $scale;
-  height: $scale;
-  border: $separaterWidth solid black;
+.row {
+  position: absolute;
+  transition: top .5s ease;
+}
+
+#BGGrid .block {
+  border-top: $separaterWidth solid black;
+  border-left: $separaterWidth solid black;
 }
 
 .red {

@@ -1,14 +1,80 @@
 var app = angular.module('tetrisGame', []);
 
 
-app.controller('gridController', ['$scope', 'grid', function($scope, grid) {
-  $scope.grid = grid;
+app.controller('gridController', ['$scope', 'grid', 'settings', function($scope, modelGrid, settings) {
+  /* This controller uses modeGrid and viewGrid to distinguish between the
+  ** actual grid service and a helper object which is used to aid in rendering */
+
+  $scope.applyScale = settings.applyScale;
+  $scope.modelGrid = modelGrid;
+
+  setupBGGrid();
+  setupViewGrid();
+
+  /* View-Grid holds the fixed blocks in the grid - not the moving piece */
+  function setupViewGrid() {
+    var newGrid = [];
+    modelGrid.content.forEach(function(row, i){
+      newGrid.push({
+        cells: row,
+        pos: i,
+        justCleared: false
+      });
+    });
+    $scope.viewGrid = newGrid;
+  }
+  /* BG-Grid used to render the background grid lines save rendering
+  ** because these don't change during the course of a game */
+  function setupBGGrid() {
+    $scope.BGGrid = new Array(modelGrid.height).fill(null).map(function(){
+      return new Array(modelGrid.width).fill(null);
+    });
+  }
+
+  /* Update the viewGrid to reflect changes in the modelGrid */
+  var watchExpressions = [
+    function() {return modelGrid.content},
+    function() {return modelGrid.content[0]},
+  ];
+  $scope.$watchGroup(watchExpressions, function(newVals, oldVals){
+    /* If modelGrid was regenerated, we need to regenerate the viewGrid and BGGrid */
+    if(newVals[0] !== oldVals[0]) {
+      setupBGGrid();
+      setupViewGrid();
+      return;
+    }
+
+    /* If no rows were cleared, then exit */
+    if(newVals[1] == oldVals[1]) return;
+
+    $scope.viewGrid.forEach(function(row){
+      /* Loop through all rows to find new positions
+      ** start from the current position to save time */
+      for(var i = 0, j = row.pos, l = modelGrid.height; i < l; i++, j = ++j % l) {
+	      if(row.cells === modelGrid.content[j]) {
+          var newPos = j;
+          break;
+        }
+      }
+      if(newPos === "undefined")
+        throw "unable to identify new position; row removed";
+
+      /* if the row is not emtpy, then it couldn't have just been cleared */
+      if(row.cells[0] != null)
+        row.justCleared = false;
+
+      /* if the row is at the top, that means it was just cleared */
+      if(newPos === 0)
+        row.justCleared = true;
+
+      row.pos = newPos;
+
+    });
+  });
 
 }]);
 
-app.controller('fallerController', ['$scope', 'faller','gameManager', '$document', function($scope, faller, game, $document){
-  var scale = 30;
-  var borderWidth = 1;
+app.controller('fallerController', ['$scope', 'faller','gameManager', 'settings', '$document', function($scope, faller, game, settings, $document){
   $scope.controls = {
     32: {
       fn: game.hard
@@ -34,9 +100,7 @@ app.controller('fallerController', ['$scope', 'faller','gameManager', '$document
 
   $scope.faller = faller;
 
-  $scope.applyScale = function(n, neg) {
-    return (n*(scale + borderWidth)*(neg ? -1 : 1)) + 'px';
-  };
+  $scope.applyScale = settings.applyScale;
 
 
 }]);
@@ -51,10 +115,10 @@ app.factory('grid', function(){
   var grid = {};
 
   grid.gen = function(width, height) {
-    this.width = width;
-    this.height = height;
-    this.content = new Array(+height).fill(null).map(function(){
-      return new Array(+width).fill(null);
+    this.width = +width;
+    this.height = +height;
+    this.content = new Array(this.height).fill(null).map(function(){
+      return new Array(this.width).fill(null);
     });
   };
 
@@ -326,7 +390,7 @@ app.factory('gameManager', ['grid', 'faller', 'pieceManager', '$document', '$tim
     for(var i = 0; i < points.length; i++) {
       pt = points[i];
       vec = {x: pos.x + pt.x, y: pos.y - pt.y};
-      if(vec.x < 0 || vec.x >= grid.width || vec.y >= grid.height || grid.get(vec))
+      if(vec.x < 0 || vec.x >= grid.width || vec.y >= grid.height || vec.y < 0 || grid.get(vec))
         return pt;
     }
 
@@ -344,6 +408,20 @@ app.factory('gameManager', ['grid', 'faller', 'pieceManager', '$document', '$tim
 
   return game;
 }]);
+
+app.factory('settings', function(){
+  var settings = {};
+
+  settings.scale = 30;
+  settings.borderWidth = 1;
+  settings.gridWidth = 12;
+  settings.gridHeight = 20;
+  settings.applyScale = function(n, neg) {
+    return (n*(settings.scale + settings.borderWidth)*(neg ? -1 : 1)) + 'px';
+  };
+
+  return settings;
+});
 
 app.directive('kbControl', ['$document', '$parse', function($document, $parse) {
   return {

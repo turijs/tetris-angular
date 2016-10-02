@@ -12,7 +12,7 @@
       <div id="game" ng-app="tetrisGame">
         <div id="CtrlLayer" ng-controller="gameControls"></div>
         <div id="fallerWrap" ng-controller="fallerController">
-          
+
           <div id="faller"
             ng-style="{left: applyScale(faller.position.x), top: applyScale(faller.position.y)}"
             kb-control="controls">
@@ -24,22 +24,23 @@
           </div>
 
         </div>
-        <div id="board" ng-controller="gridController">
-          <div style="float:right">
-            width: <input type="text" name="width" ng-model="newWidth">
-            height: <input type="text" name="height" ng-model="newHeight">
-
-            <button ng-click="grid.gen(newWidth, newHeight)">set</button>
-
-
-            <pre>width: {{grid.width}}, height: {{grid.height}}</pre>
-            <pre>{{grid.content.length}}</pre>
+        <div id="board" ng-controller="gridController" ng-style="{width:applyScale(modelGrid.width), height:applyScale(modelGrid.height)}">
+          <div id="BGGrid">
+            <div class="row"
+              ng-repeat="(i, row) in BGGrid"
+              ng-style="{top: applyScale(i)}">
+                <div class="block" ng-repeat="(j, cell) in row track by $index" ng-style="{left: applyScale(j)}">
+                </div>
+            </div>
           </div>
-          <table>
-            <tr ng-repeat="(i, row) in grid.content track by $index">
-              <td ng-repeat="(j, cell) in row track by $index" ng-class="cell" ng-click="grid.set({x: j, y: i}, 'red')"></td>
-            </tr>
-          </table>
+          <div id="viewGrid" >
+            <div class="row"
+              ng-repeat="(i, row) in viewGrid"
+              ng-style="{top: applyScale(row.pos)}"
+              ng-class="{cleared: row.justCleared}">
+                <div class="block" ng-repeat="(j, cell) in row.cells track by $index" ng-class="cell" ng-style="{left: applyScale(j)}" ng-click="modelGrid.set({x: j, y: i}, 'red')"></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
