@@ -9,6 +9,10 @@
 
 #board {
   position: relative;
+  border: 5px solid gray;
+  border-radius: 4px;
+  background-color: #262626;
+  margin: 20px auto;
 }
 
 #fallerWrap {
@@ -20,11 +24,11 @@
 
 #faller {
   position: absolute;
-  transition: all .1s ease;
+  transition: all .05s ease;
 }
 
 #viewGrid {
-  z-index: 50;
+  z-index: 120;
   position: absolute;
   top: 1px;
   left: 1px;
@@ -36,9 +40,19 @@
   height: 30px;
 }
 
+.row.cleared {
+  transition-delay: .5s;
+}
+
+.cleared .block {
+  animation: collapse .3s linear;
+}
+
 #BGGrid {
-  border-right: 1px solid black;
-  border-bottom: 1px solid black;
+  position: relative;
+  z-index: 50;
+  border-right: 1px solid gray;
+  border-bottom: 1px solid gray;
   width: 100%;
   height: 100%;
 }
@@ -49,8 +63,8 @@
 }
 
 #BGGrid .block {
-  border-top: 1px solid black;
-  border-left: 1px solid black;
+  border-top: 1px solid gray;
+  border-left: 1px solid gray;
 }
 
 .red {
@@ -79,4 +93,17 @@
 
 .cyan {
   background-color: cyan;
+}
+
+@keyframes collapse {
+  0% {
+    background: white;
+    transform: scaleY(1);
+  }
+  90% {
+    background: transparent;
+  }
+  100% {
+    transform: scaleY(1);
+  }
 }

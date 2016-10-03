@@ -1,4 +1,5 @@
 $separaterWidth: 1px;
+$separaterColor: gray;
 $scale: 30px;
 $gameBorder: 2px;
 * {
@@ -10,6 +11,10 @@ $gameBorder: 2px;
 }
 #board {
   position: relative;
+  border: 5px solid gray;
+  border-radius: 4px;
+  background-color: rgb(38,38,38);
+  margin: 20px auto;
 }
 #fallerWrap {
   z-index:100;
@@ -18,10 +23,10 @@ $gameBorder: 2px;
 }
   #faller {
     position: absolute;
-    transition: all .1s ease;
+    transition: all .05s ease;
   }
 #viewGrid {
-  z-index:50;
+  z-index:120;
   position: absolute;
   top: $separaterWidth; left: $separaterWidth;
 }
@@ -30,9 +35,17 @@ $gameBorder: 2px;
   width: $scale; height: $scale;
 
 }
+.row.cleared {
+  transition-delay: .5s;
+}
+.cleared .block {
+  animation: collapse .3s linear;
+}
 #BGGrid {
-  border-right: $separaterWidth solid black;
-  border-bottom: $separaterWidth solid black;
+  position: relative;
+  z-index: 50;
+  border-right: $separaterWidth solid $separaterColor;
+  border-bottom: $separaterWidth solid $separaterColor;
   width: 100%;
   height: 100%;
 }
@@ -42,8 +55,8 @@ $gameBorder: 2px;
 }
 
 #BGGrid .block {
-  border-top: $separaterWidth solid black;
-  border-left: $separaterWidth solid black;
+  border-top: $separaterWidth solid $separaterColor;
+  border-left: $separaterWidth solid $separaterColor;
 }
 
 .red {
@@ -66,4 +79,16 @@ $gameBorder: 2px;
 }
 .cyan {
   background-color: cyan;
+}
+
+@keyframes collapse {
+  0% {
+    background: white;
+    transform: scaleY(1);
+  }
+  90% {
+    background: transparent;
+    //transform: scaleY(0);
+  }
+  100% {transform: scaleY(1)}
 }

@@ -11,20 +11,19 @@
     <div id="wrapper">
       <div id="game" ng-app="tetrisGame">
         <div id="CtrlLayer" ng-controller="gameControls"></div>
-        <div id="fallerWrap" ng-controller="fallerController">
 
-          <div id="faller"
-            ng-style="{left: applyScale(faller.position.x), top: applyScale(faller.position.y)}"
-            kb-control="controls">
-            <div class="block"
-              ng-repeat="point in faller.points"
-              ng-style="{left: applyScale(point.x), top: applyScale(point.y, true)}"
-              ng-class="faller.color">
+        <div id="board" ng-controller="gridController" ng-style="{width:applyScale(modelGrid.width), height:applyScale(modelGrid.height)}">
+          <div id="fallerWrap" ng-controller="fallerController">
+            <div id="faller"
+              ng-style="{left: applyScale(faller.position.x), top: applyScale(faller.position.y)}"
+              kb-control="controls">
+              <div class="block"
+                ng-repeat="point in faller.points"
+                ng-style="{left: applyScale(point.x), top: applyScale(point.y, true)}"
+                ng-class="faller.color">
+              </div>
             </div>
           </div>
-
-        </div>
-        <div id="board" ng-controller="gridController" ng-style="{width:applyScale(modelGrid.width), height:applyScale(modelGrid.height)}">
           <div id="BGGrid">
             <div class="row"
               ng-repeat="(i, row) in BGGrid"
@@ -38,7 +37,7 @@
               ng-repeat="(i, row) in viewGrid"
               ng-style="{top: applyScale(row.pos)}"
               ng-class="{cleared: row.justCleared}">
-                <div class="block" ng-repeat="(j, cell) in row.cells track by $index" ng-class="cell" ng-style="{left: applyScale(j)}" ng-click="modelGrid.set({x: j, y: i}, 'red')"></div>
+                <div class="block" ng-repeat="(j, cell) in row.cells track by $index" ng-class="cell" ng-style="{left: applyScale(j)}" ng-click="modelGrid.set({x: j, y: row.pos}, 'red')"></div>
             </div>
           </div>
         </div>

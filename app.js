@@ -14,6 +14,7 @@ app.controller('gridController', ['$scope', 'grid', 'settings', function($scope,
   /* View-Grid holds the fixed blocks in the grid - not the moving piece */
   function setupViewGrid() {
     var newGrid = [];
+
     modelGrid.content.forEach(function(row, i){
       newGrid.push({
         cells: row,
@@ -21,6 +22,7 @@ app.controller('gridController', ['$scope', 'grid', 'settings', function($scope,
         justCleared: false
       });
     });
+
     $scope.viewGrid = newGrid;
   }
   /* BG-Grid used to render the background grid lines save rendering
@@ -29,6 +31,7 @@ app.controller('gridController', ['$scope', 'grid', 'settings', function($scope,
     $scope.BGGrid = new Array(modelGrid.height).fill(null).map(function(){
       return new Array(modelGrid.width).fill(null);
     });
+    console.log("BGGrid:",$scope.BGGrid);
   }
 
   /* Update the viewGrid to reflect changes in the modelGrid */
@@ -117,8 +120,11 @@ app.factory('grid', function(){
   grid.gen = function(width, height) {
     this.width = +width;
     this.height = +height;
-    this.content = new Array(this.height).fill(null).map(function(){
-      return new Array(this.width).fill(null);
+
+
+
+    this.content = new Array(grid.height).fill(null).map(function(){
+      return new Array(grid.width).fill(null);
     });
   };
 
@@ -132,7 +138,7 @@ app.factory('grid', function(){
 
   grid.absorb = function(piece) {
     var pos = piece.position;
-    console.log("absorbing...");
+    //console.log("absorbing...");
     piece.points.forEach(function(pt){
       grid.set({x: pos.x + pt.x, y: pos.y - pt.y}, piece.color);
     });
@@ -159,7 +165,7 @@ app.factory('grid', function(){
 
   grid.gen(12, 20);
 
-  //console.log(grid.content);
+  // console.log(grid.content);
 
   return grid;
 });
