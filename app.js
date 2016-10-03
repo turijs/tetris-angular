@@ -1,7 +1,7 @@
 var app = angular.module('tetrisGame', []);
 
 
-app.controller('gridController', ['$scope', 'grid', 'settings', function($scope, modelGrid, settings) {
+app.controller('gridController', ['$scope', 'grid', 'settings', '$timeout', function($scope, modelGrid, settings, $timeout) {
   /* This controller uses modeGrid and viewGrid to distinguish between the
   ** actual grid service and a helper object which is used to aid in rendering */
 
@@ -62,13 +62,15 @@ app.controller('gridController', ['$scope', 'grid', 'settings', function($scope,
       if(newPos === "undefined")
         throw "unable to identify new position; row removed";
 
-      /* if the row is not emtpy, then it couldn't have just been cleared */
-      if(row.cells[0] != null)
-        row.justCleared = false;
 
       /* if the row is at the top, that means it was just cleared */
-      if(newPos === 0)
+      if(newPos === 0) {
         row.justCleared = true;
+        /* after acouple seconds, it is no longer "just cleared"; any animations will have time to run */
+        $timeout(function(){row.justCleared = false}, 2000);
+      }
+
+
 
       row.pos = newPos;
 
@@ -84,7 +86,7 @@ app.controller('fallerController', ['$scope', 'faller','gameManager', 'settings'
     },
     37: {
       fn: game.left,
-      repeatDelay: 80,
+      repeatDelay: 50,
       initialRepeatDelay: 200
     },
     38: {
@@ -92,18 +94,26 @@ app.controller('fallerController', ['$scope', 'faller','gameManager', 'settings'
     },
     39: {
       fn: game.right,
-      repeatDelay: 80,
+      repeatDelay: 50,
       initialRepeatDelay: 200
     },
     40: {
       fn: game.down,
-      repeatDelay: 100
+      repeatDelay: 50
     }
   };
 
   $scope.faller = faller;
 
   $scope.applyScale = settings.applyScale;
+
+  $scope.classNames = function() {
+    var map = {};
+    map[faller.color] = true;
+    map.aboutToFix = faller.aboutToFix;
+
+    return map;
+  };
 
 
 }]);
@@ -173,11 +183,16 @@ app.factory('grid', function(){
 
 
 
-app.factory('faller', ['grid', function(grid) {
+app.factory('faller', ['grid', '$timeout', function(grid, $timeout) {
   var faller = {};
 
   faller.reFall = function(piece, start) {
     this.position = {x:Math.floor((grid.width - 1)/2), y:piece.topOffset};
+    this.aboutToFix = false;
+    this.landAttempts = 0;
+    this.restart = true; //stop from sliding up to re-fall
+      $timeout(function(){faller.restart = false;}, 20);
+    //////
     this.points = piece.points;
     this.color = piece.color;
     this.spread = piece.spread;
@@ -321,23 +336,28 @@ app.factory('gameManager', ['grid', 'faller', 'pieceManager', '$document', '$tim
       return;
 
     faller.moveLeft();
+    game.checkLanded();
   };
   game.right = function() {
     if(game.findCollision( game.ghostFaller().moveRight() ))
       return;
 
     faller.moveRight();
+    game.checkLanded();
   };
   game.down = function() {
     if(game.findCollision( game.ghostFaller().moveDown() ))
-      return;
+      return false;
 
     faller.moveDown();
+    game.checkLanded();
+    return true;
   };
   game.rot = function() {
     var normalRot = game.ghostFaller().rotateCW()
     if(!game.findCollision( normalRot )) {
       faller.rotateCW();
+      game.checkLanded();
       return;
     }
     /* Try rotating about each individual point; this can create "wall kicks" */
@@ -347,7 +367,8 @@ app.factory('gameManager', ['grid', 'faller', 'pieceManager', '$document', '$tim
         /* find offset */
         var offset = {x: offsetRot.points[0].x - normalRot.points[0].x, y: offsetRot.points[0].y - normalRot.points[0].y}
         faller.jumpTo(offset).rotateCW();
-        return
+        game.checkLanded();
+        return;
       }
     }
   };
@@ -357,6 +378,7 @@ app.factory('gameManager', ['grid', 'faller', 'pieceManager', '$document', '$tim
       n++;
     }
     faller.moveDown(n);
+    game.tick(300);
   }
 
 
@@ -366,14 +388,24 @@ app.factory('gameManager', ['grid', 'faller', 'pieceManager', '$document', '$tim
     faller.reFall(pieceManager.getNextPiece());
 
 
-    this.tickSpeed = 1;
-    this._TID = $interval(this.tick, 1000);
+    this.tickSpeed = 1000;
+    this._TID = $timeout(this.tick, 1000);
   };
 
-  game.tick = function() {
+  game.tick = function(withDelay) {
+    console.log('tick..');
     var self = game;
+    /* cancel any existing timeout */
+    $timeout.cancel(self._TID);
+    self._TID = null;
 
-    if(self.findCollision( self.ghostFaller().moveDown() )) {
+    /* postpone the tick? */
+    if(withDelay) {
+      tickAgain(withDelay);
+      return false;
+    }
+
+    if(!self.down()) {
       grid.absorb(faller);
 
       var completeRows = grid.findCompleteRows();
@@ -382,11 +414,17 @@ app.factory('gameManager', ['grid', 'faller', 'pieceManager', '$document', '$tim
 
       faller.reFall(pieceManager.getNextPiece());
 
-    } else {
-      faller.moveDown();
     }
 
+    /* if a new tick hasn't already been scheduled */
+    if(!self._TID)
+      tickAgain();
 
+
+
+    function tickAgain(delay) {
+      self._TID = $timeout(self.tick, delay || self.tickSpeed);
+    }
   };
 
   game.findCollision = function(piece) {
@@ -402,6 +440,18 @@ app.factory('gameManager', ['grid', 'faller', 'pieceManager', '$document', '$tim
 
     return false;
   };
+
+  game.checkLanded = function() {
+    if(faller.landAttempts >= 12) return; //no more chances to put off fixing the piece
+
+    faller.aboutToFix = false;
+
+    if(this.findCollision( this.ghostFaller().moveDown() )) {
+      faller.landAttempts++;
+      $timeout(function(){faller.aboutToFix = true}, 20); //yes, hacky. But animation needs to restart
+      this.tick(900);
+    }
+  }
 
   game.ghostFaller = function() {
     var ghost = Object.create(faller);

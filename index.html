@@ -16,7 +16,7 @@
           <div id="fallerWrap" ng-controller="fallerController">
             <div id="faller"
               ng-style="{left: applyScale(faller.position.x), top: applyScale(faller.position.y)}"
-              kb-control="controls">
+              kb-control="controls" ng-class="{aboutToFix: faller.aboutToFix, restart: faller.restart}">
               <div class="block"
                 ng-repeat="point in faller.points"
                 ng-style="{left: applyScale(point.x), top: applyScale(point.y, true)}"

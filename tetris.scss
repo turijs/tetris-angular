@@ -25,6 +25,12 @@ $gameBorder: 2px;
     position: absolute;
     transition: all .05s ease;
   }
+  #faller.aboutToFix {
+    animation: aboutToFix .9s ease;
+  }
+  #faller.restart {
+    transition: none;
+  }
 #viewGrid {
   z-index:120;
   position: absolute;
@@ -91,4 +97,10 @@ $gameBorder: 2px;
     //transform: scaleY(0);
   }
   100% {transform: scaleY(1)}
+}
+
+@keyframes aboutToFix {
+  0% {opacity: 1}
+  70% {opacity: .5}
+  100% {opacity: 1}
 }
