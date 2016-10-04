@@ -1,12 +1,13 @@
 var app = angular.module('tetrisGame', []);
 
 
-app.controller('gridController', ['$scope', 'grid', 'settings', '$timeout', function($scope, modelGrid, settings, $timeout) {
+app.controller('gridController', ['$scope', 'grid', 'settings', 'gameManager', '$timeout', function($scope, modelGrid, settings, game, $timeout) {
   /* This controller uses modeGrid and viewGrid to distinguish between the
   ** actual grid service and a helper object which is used to aid in rendering */
 
   $scope.applyScale = settings.applyScale;
   $scope.modelGrid = modelGrid;
+  $scope.game = game;
 
   setupBGGrid();
   setupViewGrid();
@@ -31,25 +32,17 @@ app.controller('gridController', ['$scope', 'grid', 'settings', '$timeout', func
     $scope.BGGrid = new Array(modelGrid.height).fill(null).map(function(){
       return new Array(modelGrid.width).fill(null);
     });
-    console.log("BGGrid:",$scope.BGGrid);
+    //console.log("BGGrid:",$scope.BGGrid);
   }
 
-  /* Update the viewGrid to reflect changes in the modelGrid */
-  var watchExpressions = [
-    function() {return modelGrid.content},
-    function() {return modelGrid.content[0]},
-  ];
-  $scope.$watchGroup(watchExpressions, function(newVals, oldVals){
-    /* If modelGrid was regenerated, we need to regenerate the viewGrid and BGGrid */
-    if(newVals[0] !== oldVals[0]) {
-      setupBGGrid();
-      setupViewGrid();
-      return;
-    }
+  /* If modelGrid was regenerated, we need to regenerate the viewGrid and BGGrid */
+  $scope.$on('grid:new', function(e){
+    setupBGGrid();
+    setupViewGrid();
+  });
 
-    /* If no rows were cleared, then exit */
-    if(newVals[1] == oldVals[1]) return;
-
+  /* update row positions in viewGrid when rows are cleared */
+  $scope.$on('grid:rowsCollapsed', function(e, collapsedRows){
     $scope.viewGrid.forEach(function(row){
       /* Loop through all rows to find new positions
       ** start from the current position to save time */
@@ -59,28 +52,30 @@ app.controller('gridController', ['$scope', 'grid', 'settings', '$timeout', func
           break;
         }
       }
-      if(newPos === "undefined")
+      if(newPos === "undefined") /* in case something goes wrong */
         throw "unable to identify new position; row removed";
 
-
-      /* if the row is at the top, that means it was just cleared */
-      if(newPos === 0) {
+      /* if this row in the collapsedRows array, set prop "justCleared" to true */
+      if(collapsedRows.indexOf(row.pos) != -1) {
         row.justCleared = true;
-        /* after acouple seconds, it is no longer "just cleared"; any animations will have time to run */
-        $timeout(function(){row.justCleared = false}, 2000);
+      } else {
+        row.justCleared = false;
       }
 
-
-
       row.pos = newPos;
-
     });
   });
 
 }]);
 
-app.controller('fallerController', ['$scope', 'faller','gameManager', 'settings', '$document', function($scope, faller, game, settings, $document){
+app.controller('fallerController', ['$scope', 'faller','gameManager', 'settings', 'uiState', '$document', function($scope, faller, game, settings, ui, $document){
   $scope.controls = {
+    27: {
+      fn: function() {
+        game.pause();
+        ui.setState('pause');
+      }
+    },
     32: {
       fn: game.hard
     },
@@ -118,24 +113,50 @@ app.controller('fallerController', ['$scope', 'faller','gameManager', 'settings'
 
 }]);
 
-app.controller('gameControls', ['$scope', 'gameManager', function($scope, game) {
+app.controller('gameControls', ['$scope', 'gameManager', 'uiState', function($scope, game, ui) {
+  /* start game when page is loaded */
   game.restart();
+
+  $scope.ui = ui;
+  $scope.game = game;
+  $scope.pauseMsg = function() {
+    return game.isEnded ? "Game Over" : "Paused";
+  }
+  $scope.resume = function() {
+    if(game.isEnded) return;
+
+    game.resume();
+    ui.setState('game');
+  };
+  $scope.new = function() {
+    game.restart();
+    ui.setState('game');
+  };
+
+  /* watch to see if the game ends, and if so trigger the pause screen */
+  $scope.$watch(function(){return game.isEnded}, function(newVal, oldVal){
+    if(newVal)
+      ui.setState('pause');
+  });
+
 
 }]);
 
 
-app.factory('grid', function(){
+app.factory('grid', ['$rootScope', function($rootScope){
   var grid = {};
+  grid.id = -1;
 
   grid.gen = function(width, height) {
     this.width = +width;
     this.height = +height;
-
-
+    this.id++;
 
     this.content = new Array(grid.height).fill(null).map(function(){
       return new Array(grid.width).fill(null);
     });
+
+    $rootScope.$broadcast('grid:new');
   };
 
   grid.set = function(vector, val) {
@@ -171,6 +192,7 @@ app.factory('grid', function(){
     for(var i = 0; i < rows.length; i++) {
       this.content.unshift(this.content.splice(rows[i],1)[0].fill(null));
     }
+    $rootScope.$broadcast('grid:rowsCollapsed', rows);
   };
 
   grid.gen(12, 20);
@@ -178,7 +200,7 @@ app.factory('grid', function(){
   // console.log(grid.content);
 
   return grid;
-});
+}]);
 
 
 
@@ -327,8 +349,11 @@ app.factory('pieceManager', [function() {
   return manager;
 }]);
 
-app.factory('gameManager', ['grid', 'faller', 'pieceManager', '$document', '$timeout','$interval', function(grid, faller, pieceManager, $document, $timeout, $interval){
+app.factory('gameManager', ['grid', 'faller', 'pieceManager', 'settings', '$document', '$timeout','$interval', function(grid, faller, pieceManager, settings, $document, $timeout, $interval){
   var game = {};
+
+  game.isRunning = true;
+  game.isEnded = false;
 
 
   game.left = function() {
@@ -377,13 +402,20 @@ app.factory('gameManager', ['grid', 'faller', 'pieceManager', '$document', '$tim
     while(!game.findCollision(ghost.moveDown())) {
       n++;
     }
-    faller.moveDown(n);
-    game.tick(300);
+    if(n > 0) {
+      faller.moveDown(n);
+      game.tick(300);
+    }
   }
 
 
 
   game.restart = function() {
+    game.isRunning = true;
+    game.isEnded = false;
+
+    grid.gen(settings.gridWidth, settings.gridHeight);
+
     pieceManager.queuePiece(3);
     faller.reFall(pieceManager.getNextPiece());
 
@@ -393,11 +425,14 @@ app.factory('gameManager', ['grid', 'faller', 'pieceManager', '$document', '$tim
   };
 
   game.tick = function(withDelay) {
-    console.log('tick..');
     var self = game;
+
     /* cancel any existing timeout */
     $timeout.cancel(self._TID);
     self._TID = null;
+
+    /* stop ticking if game is paused */
+    if(!self.isRunning) return false;
 
     /* postpone the tick? */
     if(withDelay) {
@@ -413,6 +448,12 @@ app.factory('gameManager', ['grid', 'faller', 'pieceManager', '$document', '$tim
         grid.collapseRows(completeRows);
 
       faller.reFall(pieceManager.getNextPiece());
+
+      /* No more room? Game over */
+      if(self.findCollision(faller)) {
+        game.isRunning = false;
+        game.isEnded = true;
+      }
 
     }
 
@@ -460,6 +501,14 @@ app.factory('gameManager', ['grid', 'faller', 'pieceManager', '$document', '$tim
     return ghost;
   }
 
+  game.pause = function() {
+    game.isRunning = false;
+  }
+  game.resume = function() {
+    game.isRunning = true;
+    game.tick(game.tickSpeed);
+  }
+
 
 
   return game;
@@ -479,6 +528,20 @@ app.factory('settings', function(){
   return settings;
 });
 
+app.factory('uiState', ['gameManager', function(game){
+  var ui = {};
+
+  ui.setState = function(state) {
+    if(state == "game" && game.ended) return false;
+
+    this.state = state;
+  }
+
+  ui.setState('game');
+
+  return ui;
+}]);
+
 app.directive('kbControl', ['$document', '$parse', function($document, $parse) {
   return {
     restrict: 'A',
@@ -494,7 +557,7 @@ app.directive('kbControl', ['$document', '$parse', function($document, $parse) {
 
     /* enable or disable these keyboard controls based on the value of the kbControlEnabled (bool) attribute */
     if('kbControlEnabled' in attrs) {
-      console.log("attribute exists!");
+      //console.log("attribute exists!");
       scope.$watch($parse(attrs.kbControlEnabled), function(newVal, oldVal){
         if(!newVal && enabled)
           disable();
@@ -512,6 +575,7 @@ app.directive('kbControl', ['$document', '$parse', function($document, $parse) {
     function disable() {
       $document.off("keydown", keyDownHandler);
       $document.off("keyup", keyUpHandler);
+      flushTimers();
       enabled = false;
     }
 
@@ -545,7 +609,13 @@ app.directive('kbControl', ['$document', '$parse', function($document, $parse) {
                 clearTimeout(timers[key]);
             delete timers[key];
         }
-    };
+    }
 
+    function flushTimers() {
+      for(key in timers)
+        if(timers[key] !== null)
+          clearTimeout(timers[key]);
+      timers= {};
+    }
   }
 }]);
