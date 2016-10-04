@@ -2,18 +2,24 @@ $separaterWidth: 1px;
 $separaterColor: gray;
 $scale: 30px;
 $gameBorder: 2px;
+$bgColor: rgb(38,38,38);
+
 * {
   margin:0;
   padding:0;
 }
 #game {
-  position: relative;
+
 }
-#board {
-  position: relative;
+.module {
   border: 5px solid gray;
   border-radius: 4px;
-  background-color: rgb(38,38,38);
+  background-color: $bgColor;
+}
+
+#board {
+  position: relative;
+
   margin: 20px auto;
 }
 #fallerWrap {
@@ -103,4 +109,66 @@ $gameBorder: 2px;
   0% {opacity: 1}
   70% {opacity: .5}
   100% {opacity: 1}
+}
+
+#ctrlLayer {
+  position: absolute;
+  top: 0; bottom:0; left: 0; right: 0;
+  z-index: 200;
+  background: rgba(50,50,50,.77);
+}
+
+.panel {
+  margin: 0 auto;
+  background: rgba(166,166,166,.87);
+  box-shadow: 0 0 30px 10px black;
+}
+
+.module.overlay {
+  box-shadow: 0 0 30px 10px black;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+h1 {
+  text-align: center;
+  color: gray;
+  font-family: 'Bungee', sans-serif;
+  font-size: 40px;
+  letter-spacing: 1px;
+  margin: 40px 0;
+}
+
+#pause {
+  width: 300px;
+  height: 440px;
+}
+
+button {
+  color: $bgColor;
+  padding: 25px;
+  border: none;
+  border-radius: 4px;
+  font-family: 'Bungee', sans-serif;
+  font-size: 20px;
+  letter-spacing: 2px;
+  cursor: pointer;
+
+  transition: opacity .4s ease;
+
+  display: block;
+  margin: 20px auto;
+  width: 250px;
+}
+
+button:hover {
+  opacity: .7;
+}
+
+button:disabled {
+  background: rgb(138,138,138);
+  opacity: .3!important;
+  cursor: default;
 }
