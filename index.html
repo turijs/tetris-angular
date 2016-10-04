@@ -17,10 +17,25 @@
             <h1>{{pauseMsg()}}</h1>
             <button id="button-resume" class="green" ng-click="resume()" ng-disabled="game.isEnded">Resume</button>
             <button id="button-new" class="red" ng-click="new()">New Game</button>
-            <button id="button-settings" class="cyan" ng click="ui.setState('settings')">Settings</button>
+            <button id="button-settings" class="cyan" ng-click="ui.setState('settings')">Settings</button>
           </div>
 
-          <div id="settings" class="panel" ng-switch-when="settings"></div>
+          <div id="settings" class="module overlay" ng-switch-when="settings">
+            <h1>Settings</h1>
+            <div class="panel">
+              <h2>Board Size</h2>
+            </div>
+            <div class="panel">
+              <h2>Game Scale</h2>
+            </div>
+            <div class="panel">
+              <h2>Pieces</h2>
+            </div>
+            <div class="button-wrapper">
+              <button>Cancel</button>
+              <button>Save</button>
+            </div>
+          </div>
         </div>
         </div>
 

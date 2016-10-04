@@ -32,25 +32,17 @@ app.controller('gridController', ['$scope', 'grid', 'settings', 'gameManager', '
     $scope.BGGrid = new Array(modelGrid.height).fill(null).map(function(){
       return new Array(modelGrid.width).fill(null);
     });
-    console.log("BGGrid:",$scope.BGGrid);
+    //console.log("BGGrid:",$scope.BGGrid);
   }
 
-  /* Update the viewGrid to reflect changes in the modelGrid */
-  var watchExpressions = [
-    function() {return modelGrid.content},
-    function() {return modelGrid.content[0]},
-  ];
-  $scope.$watchGroup(watchExpressions, function(newVals, oldVals){
-    /* If modelGrid was regenerated, we need to regenerate the viewGrid and BGGrid */
-    if(newVals[0] !== oldVals[0]) {
-      setupBGGrid();
-      setupViewGrid();
-      return;
-    }
+  /* If modelGrid was regenerated, we need to regenerate the viewGrid and BGGrid */
+  $scope.$on('grid:new', function(e){
+    setupBGGrid();
+    setupViewGrid();
+  });
 
-    /* If no rows were cleared, then exit */
-    if(newVals[1] == oldVals[1]) return;
-
+  /* update row positions in viewGrid when rows are cleared */
+  $scope.$on('grid:rowsCollapsed', function(e, collapsedRows){
     $scope.viewGrid.forEach(function(row){
       /* Loop through all rows to find new positions
       ** start from the current position to save time */
@@ -60,21 +52,17 @@ app.controller('gridController', ['$scope', 'grid', 'settings', 'gameManager', '
           break;
         }
       }
-      if(newPos === "undefined")
+      if(newPos === "undefined") /* in case something goes wrong */
         throw "unable to identify new position; row removed";
 
-
-      /* if the row is at the top, that means it was just cleared */
-      if(newPos === 0) {
+      /* if this row in the collapsedRows array, set prop "justCleared" to true */
+      if(collapsedRows.indexOf(row.pos) != -1) {
         row.justCleared = true;
-        /* after acouple seconds, it is no longer "just cleared"; any animations will have time to run */
-        $timeout(function(){row.justCleared = false}, 2000);
+      } else {
+        row.justCleared = false;
       }
 
-
-
       row.pos = newPos;
-
     });
   });
 
@@ -155,18 +143,20 @@ app.controller('gameControls', ['$scope', 'gameManager', 'uiState', function($sc
 }]);
 
 
-app.factory('grid', function(){
+app.factory('grid', ['$rootScope', function($rootScope){
   var grid = {};
+  grid.id = -1;
 
   grid.gen = function(width, height) {
     this.width = +width;
     this.height = +height;
-
-
+    this.id++;
 
     this.content = new Array(grid.height).fill(null).map(function(){
       return new Array(grid.width).fill(null);
     });
+
+    $rootScope.$broadcast('grid:new');
   };
 
   grid.set = function(vector, val) {
@@ -202,6 +192,7 @@ app.factory('grid', function(){
     for(var i = 0; i < rows.length; i++) {
       this.content.unshift(this.content.splice(rows[i],1)[0].fill(null));
     }
+    $rootScope.$broadcast('grid:rowsCollapsed', rows);
   };
 
   grid.gen(12, 20);
@@ -209,7 +200,7 @@ app.factory('grid', function(){
   // console.log(grid.content);
 
   return grid;
-});
+}]);
 
 
 
@@ -566,7 +557,7 @@ app.directive('kbControl', ['$document', '$parse', function($document, $parse) {
 
     /* enable or disable these keyboard controls based on the value of the kbControlEnabled (bool) attribute */
     if('kbControlEnabled' in attrs) {
-      console.log("attribute exists!");
+      //console.log("attribute exists!");
       scope.$watch($parse(attrs.kbControlEnabled), function(newVal, oldVal){
         if(!newVal && enabled)
           disable();

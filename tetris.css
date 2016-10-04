@@ -137,12 +137,6 @@
   background: rgba(50, 50, 50, 0.77);
 }
 
-.panel {
-  margin: 0 auto;
-  background: rgba(166, 166, 166, 0.87);
-  box-shadow: 0 0 30px 10px black;
-}
-
 .module.overlay {
   box-shadow: 0 0 30px 10px black;
   position: absolute;
@@ -160,11 +154,6 @@ h1 {
   margin: 40px 0;
 }
 
-#pause {
-  width: 300px;
-  height: 440px;
-}
-
 button {
   color: #262626;
   padding: 25px;
@@ -175,9 +164,6 @@ button {
   letter-spacing: 2px;
   cursor: pointer;
   transition: opacity .4s ease;
-  display: block;
-  margin: 20px auto;
-  width: 250px;
 }
 
 button:hover {
@@ -188,4 +174,15 @@ button:disabled {
   background: #8a8a8a;
   opacity: 0.3 !important;
   cursor: default;
+}
+
+#pause {
+  width: 300px;
+  height: 440px;
+}
+
+#pause button {
+  display: block;
+  margin: 20px auto;
+  width: 250px;
 }
