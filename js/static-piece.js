@@ -3,7 +3,7 @@ angular.module('tetrisGame').directive('piece', function(){
     restrict: 'E',
     scope: {
       points: '=',
-      color: '@',
+      color: '=',
       scale: '='
     },
     replace: true,
@@ -13,18 +13,14 @@ angular.module('tetrisGame').directive('piece', function(){
     link: function(scope) {
       if(!scope.scale) scope.scale = 30;
 
-      var minX = Math.min.apply(null, scope.points.map(function(point){
-        return point.x;
-      }));
-      var maxX = Math.max.apply(null, scope.points.map(function(point){
-        return point.x;
-      }));
-      var minY = Math.min.apply(null, scope.points.map(function(point){
-        return point.y;
-      }));
-      var maxY = Math.max.apply(null, scope.points.map(function(point){
-        return point.y;
-      }));
+      var minX, maxX, minY, maxY;
+      updateMinMaxVals();
+
+      /* if the shape of the piece changes, update our saved min and max values */
+      scope.$watchCollection('points', function(){
+        updateMinMaxVals();
+      });
+
       function applyScale(n) {
         return n * (scope.scale + 1);
       }
@@ -46,6 +42,21 @@ angular.module('tetrisGame').directive('piece', function(){
           height: scope.scale + 'px'
         }
       };
+
+      function updateMinMaxVals() {
+        minX = Math.min.apply(null, scope.points.map(function(point){
+          return point.x;
+        }));
+        maxX = Math.max.apply(null, scope.points.map(function(point){
+          return point.x;
+        }));
+        minY = Math.min.apply(null, scope.points.map(function(point){
+          return point.y;
+        }));
+        maxY = Math.max.apply(null, scope.points.map(function(point){
+          return point.y;
+        }));
+      }
 
     }
   }

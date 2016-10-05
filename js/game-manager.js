@@ -65,7 +65,7 @@ angular.module('tetrisGame').factory('gameManager', ['grid', 'faller', 'pieceMan
 
     grid.gen(settings.gridWidth, settings.gridHeight);
 
-    pieceManager.queuePiece(3);
+    pieceManager.flushQueue().queuePiece(3);
     faller.reFall(pieceManager.getNextPiece());
 
 

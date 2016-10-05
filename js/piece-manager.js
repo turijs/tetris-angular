@@ -100,21 +100,35 @@ angular.module('tetrisGame').factory('pieceManager', [function() {
 
   manager.upcomingPieces = [];
 
+  var id = -1;
+
   manager.queuePiece = function(n) {
     /* n: number of pieces to queue (optional) */
     n = n || 1;
 
     for(var i = 0; i < n; i++) {
       var index = Math.floor(Math.random()*this.pieceTypes.length);
-      this.upcomingPieces.push(index);
+
+      var itm = {
+        piece: this.pieceTypes[index],
+        /* assign an ID # to uniquely identify each item in the queue */
+        id: ++id
+      };
+
+      this.upcomingPieces.push(itm);
     }
   };
 
   manager.getNextPiece = function() {
     this.queuePiece();
 
-    return this.pieceTypes[this.upcomingPieces.shift()];
+    return this.upcomingPieces.shift().piece;
   };
+
+  manager.flushQueue = function() {
+    this.upcomingPieces.length = 0;
+    return this;
+  }
 
   return manager;
 }]);

@@ -3,8 +3,14 @@
   padding: 0;
 }
 
-#boardWrap {
+#game {
+  margin-top: 20px;
   text-align: center;
+}
+
+#boardWrap {
+  display: inline-block;
+  position: relative;
 }
 
 #board {
@@ -75,16 +81,21 @@
   border: 5px solid gray;
   border-radius: 4px;
   background-color: #262626;
-  display: inline-block;
-  vertical-align: top;
 }
 
 #upcoming-pieces {
-  padding: 25px;
+  padding: 0 25px;
+  position: absolute;
+  top: 0;
+  left: 102%;
 }
 
 .static-piece {
   position: relative;
+}
+
+#upcoming-pieces .static-piece {
+  margin: 25px auto;
 }
 
 .red {

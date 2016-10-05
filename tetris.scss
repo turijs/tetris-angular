@@ -9,10 +9,12 @@ $bgColor: rgb(38,38,38);
   padding:0;
 }
 #game {
-
+  margin-top: 20px;
+  text-align: center;
 }
 #boardWrap {
-  text-align: center;
+  display: inline-block;
+  position: relative;
 }
 #board {
   position: relative;
@@ -72,17 +74,21 @@ $bgColor: rgb(38,38,38);
   border: 5px solid gray;
   border-radius: 4px;
   background-color: $bgColor;
-  display: inline-block;
-  vertical-align: top;
 }
 
 #upcoming-pieces {
-  padding: 25px;
+  padding: 0 25px;
+  position: absolute;
+  top: 0;
+  left: 102%;
 }
 .static-piece {
   position: relative;
 }
+#upcoming-pieces .static-piece {
+  margin: 25px auto;
 
+}
 
 .red {
   background-color: red;
