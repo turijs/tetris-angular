@@ -9,18 +9,17 @@ $bgColor: rgb(38,38,38);
   padding:0;
 }
 #game {
-
+  margin-top: 20px;
+  text-align: center;
 }
-.module {
-  border: 5px solid gray;
-  border-radius: 4px;
-  background-color: $bgColor;
+#boardWrap {
+  display: inline-block;
+  position: relative;
 }
-
 #board {
   position: relative;
 
-  margin: 20px auto;
+  //margin: 20px auto;
 }
 #fallerWrap {
   z-index:100;
@@ -71,6 +70,26 @@ $bgColor: rgb(38,38,38);
   border-left: $separaterWidth solid $separaterColor;
 }
 
+.module {
+  border: 5px solid gray;
+  border-radius: 4px;
+  background-color: $bgColor;
+}
+
+#upcoming-pieces {
+  padding: 0 25px;
+  position: absolute;
+  top: 0;
+  left: 102%;
+}
+.static-piece {
+  position: relative;
+}
+#upcoming-pieces .static-piece {
+  margin: 25px auto;
+
+}
+
 .red {
   background-color: red;
 }
@@ -119,7 +138,7 @@ $bgColor: rgb(38,38,38);
 }
 
 .module.overlay {
-  box-shadow: 0 0 30px 10px black;
+  box-shadow: 0 0 50px 10px black;
   position: absolute;
   top: 50%;
   left: 50%;

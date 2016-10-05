@@ -3,15 +3,18 @@
   padding: 0;
 }
 
-.module {
-  border: 5px solid gray;
-  border-radius: 4px;
-  background-color: #262626;
+#game {
+  margin-top: 20px;
+  text-align: center;
+}
+
+#boardWrap {
+  display: inline-block;
+  position: relative;
 }
 
 #board {
   position: relative;
-  margin: 20px auto;
 }
 
 #fallerWrap {
@@ -72,6 +75,27 @@
 #BGGrid .block {
   border-top: 1px solid gray;
   border-left: 1px solid gray;
+}
+
+.module {
+  border: 5px solid gray;
+  border-radius: 4px;
+  background-color: #262626;
+}
+
+#upcoming-pieces {
+  padding: 0 25px;
+  position: absolute;
+  top: 0;
+  left: 102%;
+}
+
+.static-piece {
+  position: relative;
+}
+
+#upcoming-pieces .static-piece {
+  margin: 25px auto;
 }
 
 .red {
@@ -138,7 +162,7 @@
 }
 
 .module.overlay {
-  box-shadow: 0 0 30px 10px black;
+  box-shadow: 0 0 50px 10px black;
   position: absolute;
   top: 50%;
   left: 50%;
