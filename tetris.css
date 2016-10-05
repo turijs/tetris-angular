@@ -3,15 +3,12 @@
   padding: 0;
 }
 
-.module {
-  border: 5px solid gray;
-  border-radius: 4px;
-  background-color: #262626;
+#boardWrap {
+  text-align: center;
 }
 
 #board {
   position: relative;
-  margin: 20px auto;
 }
 
 #fallerWrap {
@@ -72,6 +69,22 @@
 #BGGrid .block {
   border-top: 1px solid gray;
   border-left: 1px solid gray;
+}
+
+.module {
+  border: 5px solid gray;
+  border-radius: 4px;
+  background-color: #262626;
+  display: inline-block;
+  vertical-align: top;
+}
+
+#upcoming-pieces {
+  padding: 25px;
+}
+
+.static-piece {
+  position: relative;
 }
 
 .red {
@@ -138,7 +151,7 @@
 }
 
 .module.overlay {
-  box-shadow: 0 0 30px 10px black;
+  box-shadow: 0 0 50px 10px black;
   position: absolute;
   top: 50%;
   left: 50%;
