@@ -81,13 +81,14 @@
   border: 5px solid gray;
   border-radius: 4px;
   background-color: #262626;
+  color: gray;
 }
 
 #upcoming-pieces {
   padding: 0 25px;
   position: absolute;
   top: 0;
-  left: 102%;
+  left: 105%;
 }
 
 .static-piece {
@@ -96,6 +97,27 @@
 
 #upcoming-pieces .static-piece {
   margin: 25px auto;
+}
+
+#left-module-container {
+  position: absolute;
+  top: 0;
+  right: 105%;
+}
+
+#score {
+  font-family: 'Bungee', sans-serif;
+  font-size: 14px;
+  padding: 15px 25px;
+}
+
+#score p {
+  padding: 5px 0;
+}
+
+#score p span {
+  font-size: 20px;
+  color: #669ea2;
 }
 
 .red {

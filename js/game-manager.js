@@ -1,8 +1,10 @@
-angular.module('tetrisGame').factory('gameManager', ['grid', 'faller', 'pieceManager', 'settings', '$document', '$timeout','$interval', function(grid, faller, pieceManager, settings, $document, $timeout, $interval){
+angular.module('tetrisGame').factory('gameManager', ['grid', 'faller', 'pieceManager', 'scoreManager', 'settings', '$document', '$timeout','$interval', function(grid, faller, pieceManager, score, settings, $document, $timeout, $interval){
   var game = {};
 
   game.isRunning = true;
   game.isEnded = false;
+
+  game._TID = null;
 
 
   game.left = function() {
@@ -19,12 +21,17 @@ angular.module('tetrisGame').factory('gameManager', ['grid', 'faller', 'pieceMan
     faller.moveRight();
     game.checkLanded();
   };
-  game.down = function() {
+  game.down = function(byGravity) {
     if(game.findCollision( game.ghostFaller().moveDown() ))
       return false;
 
     faller.moveDown();
     game.checkLanded();
+
+    if(!byGravity)
+      score.softDropped(1);
+
+
     return true;
   };
   game.rot = function() {
@@ -54,6 +61,7 @@ angular.module('tetrisGame').factory('gameManager', ['grid', 'faller', 'pieceMan
     if(n > 0) {
       faller.moveDown(n);
       game.tick(300);
+      score.hardDropped(n);
     }
   }
 
@@ -68,17 +76,20 @@ angular.module('tetrisGame').factory('gameManager', ['grid', 'faller', 'pieceMan
     pieceManager.flushQueue().queuePiece(3);
     faller.reFall(pieceManager.getNextPiece());
 
+    score.clear();
 
     this.tickSpeed = 1000;
-    this._TID = $timeout(this.tick, 1000);
+    this.tick(this.tickSpeed);
   };
 
   game.tick = function(withDelay) {
     var self = game;
 
     /* cancel any existing timeout */
-    $timeout.cancel(self._TID);
-    self._TID = null;
+    if(self._TID !== null){
+      $timeout.cancel(self._TID);
+      self._TID = null;
+    }
 
     /* stop ticking if game is paused */
     if(!self.isRunning) return false;
@@ -89,13 +100,16 @@ angular.module('tetrisGame').factory('gameManager', ['grid', 'faller', 'pieceMan
       return false;
     }
 
-    if(!self.down()) {
+    if(!self.down(true)) { /* true indicates that motion is 'by gravity' and thus no scoring should happen */
       grid.absorb(faller);
 
       var completeRows = grid.findCompleteRows();
-      if(completeRows.length)
+      if(completeRows.length){
         grid.collapseRows(completeRows);
-
+        score.clearedRows(completeRows);
+        /* in case the level changed, reset the tickspeed */
+        self.tickSpeed = 1000*Math.pow(.8, score.level - 1);
+      }
       faller.reFall(pieceManager.getNextPiece());
 
       /* No more room? Game over */
@@ -109,7 +123,6 @@ angular.module('tetrisGame').factory('gameManager', ['grid', 'faller', 'pieceMan
     /* if a new tick hasn't already been scheduled */
     if(!self._TID)
       tickAgain();
-
 
 
     function tickAgain(delay) {

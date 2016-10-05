@@ -12,6 +12,7 @@
     <script src="js/game-manager.js"></script>
     <script src="js/grid.js"></script>
     <script src="js/piece-manager.js"></script>
+    <script src="js/score.js"></script>
     <script src="js/settings.js"></script>
     <script src="js/static-piece.js"></script>
     <script src="js/ui-state.js"></script>
@@ -89,10 +90,17 @@
           </div>
 
           <div id="upcoming-pieces" class="module" ng-controller="upcomingController">
-
             <piece ng-repeat="itm in upcoming track by $index" points="itm.piece.points" color="itm.piece.color" scale="settings.scale"></piece>
-
           </div>
+
+          <div id="left-module-container">
+            <div id="score" class="module" ng-controller="scoreController">
+              <p>Score: <span>{{score.score}}</span></p>
+              <p>Level: <span>{{score.level}}</span></p>
+              <p>Rows: <span>{{score.totalRows}}</span></p>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

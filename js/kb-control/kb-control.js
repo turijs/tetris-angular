@@ -50,7 +50,9 @@ angular.module('kb-control', [])
         return false;
         /////////////////////
         function repeatAction(action, repeatDelay, initialRepeatDelay) {
-          scope.$apply(action);
+          scope.$apply(function(){
+            action();
+          });
 
           if(!repeatDelay) return;
 
