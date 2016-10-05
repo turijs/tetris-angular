@@ -108,7 +108,7 @@ angular.module('tetrisGame').factory('gameManager', ['grid', 'faller', 'pieceMan
         grid.collapseRows(completeRows);
         score.clearedRows(completeRows);
         /* in case the level changed, reset the tickspeed */
-        self.tickSpeed = 1000*Math.pow(.8, score.level - 1);
+        self.tickSpeed = 1000*Math.pow(.7, score.level - 1);
       }
       faller.reFall(pieceManager.getNextPiece());
 
@@ -145,14 +145,22 @@ angular.module('tetrisGame').factory('gameManager', ['grid', 'faller', 'pieceMan
   };
 
   game.checkLanded = function() {
-    if(faller.landAttempts >= 12) return; //no more chances to put off fixing the piece
-
-    faller.aboutToFix = false;
-
     if(this.findCollision( this.ghostFaller().moveDown() )) {
       faller.landAttempts++;
-      $timeout(function(){faller.aboutToFix = true}, 20); //yes, hacky. But animation needs to restart
-      this.tick(900);
+
+      /* hacky, but we need to toggle this property with a slight delay so the
+      ** animation can restart. Would be nice to have a better method down the road */
+      faller.aboutToFix = false;
+      $timeout(function(){faller.aboutToFix = true}, 20);
+
+      /* set a new timeout only if player is within allowed land attempts */
+      if(faller.landAttempts < 13)
+        this.tick(900);
+    } else if(faller.aboutToFix) {
+      /* faller was just about to land but is now no longer,
+      ** so lets reset the timer to default tickspeed */
+      this.tick(this.tickSpeed);
+      faller.aboutToFix = false;
     }
   }
 
