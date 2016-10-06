@@ -74,13 +74,14 @@ $bgColor: rgb(38,38,38);
   border: 5px solid gray;
   border-radius: 4px;
   background-color: $bgColor;
+  color: gray;
 }
 
 #upcoming-pieces {
   padding: 0 25px;
   position: absolute;
   top: 0;
-  left: 102%;
+  left: 105%;
 }
 .static-piece {
   position: relative;
@@ -89,6 +90,28 @@ $bgColor: rgb(38,38,38);
   margin: 25px auto;
 
 }
+
+#left-module-container {
+  position: absolute;
+  top: 0;
+  right: 105%;
+}
+#score {
+  font-family: 'Bungee', sans-serif;
+  font-size: 14px;
+  padding: 15px 25px;
+  //min-width: 100px;
+
+  p {
+    padding: 5px 0;
+
+    span {
+      font-size: 20px;
+      color: rgb(102,158,162);
+    }
+  }
+}
+
 
 .red {
   background-color: red;

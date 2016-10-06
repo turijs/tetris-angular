@@ -2,3 +2,7 @@ angular.module('tetrisGame').controller('upcomingController', ['$scope', 'pieceM
   $scope.scale = settings.scale;
   $scope.upcoming = manager.upcomingPieces;
 }]);
+
+angular.module('tetrisGame').controller('scoreController', ['$scope', 'scoreManager', function($scope, score){
+  $scope.score = score;
+}]);
