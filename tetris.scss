@@ -8,6 +8,9 @@ $bgColor: rgb(38,38,38);
   margin:0;
   padding:0;
 }
+body {
+  font-family: Arial, sans-serif;
+}
 #game {
   margin-top: 20px;
   text-align: center;
@@ -96,11 +99,24 @@ $bgColor: rgb(38,38,38);
   top: 0;
   right: 105%;
 }
+#hold {
+  font-family: "Lucida Console", Monaco, monospace;
+  font-size: 14px;
+  padding: 25px;
+  min-width: 100px;
+
+  p span {
+    font-family: 'Bungee', sans-serif;
+  }
+}
 #score {
   font-family: 'Bungee', sans-serif;
   font-size: 14px;
   padding: 15px 25px;
-  //min-width: 100px;
+  position: absolute;
+  top: 300px;
+  right: 0;
+  width: 90px;
 
   p {
     padding: 5px 0;
@@ -108,6 +124,7 @@ $bgColor: rgb(38,38,38);
     span {
       font-size: 20px;
       color: rgb(102,158,162);
+      display: block;
     }
   }
 }
@@ -128,7 +145,7 @@ $bgColor: rgb(38,38,38);
 .yellow {
   background-color: yellow;
 }
-.green {
+.lime {
   background-color: lime;
 }
 .cyan {

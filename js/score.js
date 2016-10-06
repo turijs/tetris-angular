@@ -20,7 +20,7 @@ angular.module('tetrisGame').factory('scoreManager', [function(){
 
     this.score += scoreToAdd*this.level;
 
-    if(this.totalRows % 12 == 0)
+    if(this.totalRows >= this.level*12)
       this.level++;
   }
 

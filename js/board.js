@@ -95,6 +95,9 @@ angular.module('tetrisGame').controller('fallerController', ['$scope', 'faller',
     40: {
       fn: game.down,
       repeatDelay: 50
+    },
+    72: {
+      fn: game.hold
     }
   };
 

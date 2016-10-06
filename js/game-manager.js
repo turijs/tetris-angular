@@ -63,7 +63,10 @@ angular.module('tetrisGame').factory('gameManager', ['grid', 'faller', 'pieceMan
       game.tick(300);
       score.hardDropped(n);
     }
-  }
+  };
+  game.hold = function() {
+    faller.reFall(pieceManager.swapHoldPiece(faller.source));
+  };
 
 
 
@@ -151,7 +154,7 @@ angular.module('tetrisGame').factory('gameManager', ['grid', 'faller', 'pieceMan
       /* hacky, but we need to toggle this property with a slight delay so the
       ** animation can restart. Would be nice to have a better method down the road */
       faller.aboutToFix = false;
-      $timeout(function(){faller.aboutToFix = true}, 20);
+      $timeout(function(){faller.aboutToFix = true}, 15);
 
       /* set a new timeout only if player is within allowed land attempts */
       if(faller.landAttempts < 13)
