@@ -92,13 +92,15 @@ angular.module('tetrisGame').factory('pieceManager', [function() {
       'yellow'),
     new Piece(
       [{x:0,y:0}, {x:-1,y:0}, {x:0,y:1}, {x:1,y:1}],
-      'green'),
+      'lime'),
     new Piece(
       [{x:0,y:0}, {x:1,y:0}, {x:0,y:1}, {x:-1,y:1}],
       'red'),
   ];
 
   manager.upcomingPieces = [];
+
+  manager.heldPiece = null;
 
   var id = -1;
 
@@ -127,8 +129,18 @@ angular.module('tetrisGame').factory('pieceManager', [function() {
 
   manager.flushQueue = function() {
     this.upcomingPieces.length = 0;
+    this.heldPiece = null;
     return this;
   }
+
+  manager.swapHoldPiece = function(newPiece) {
+    var piece = this.heldPiece ? this.heldPiece : this.getNextPiece();
+
+    this.heldPiece = newPiece;
+
+    return piece;
+  };
+
 
   return manager;
 }]);

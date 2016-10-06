@@ -94,6 +94,10 @@
           </div>
 
           <div id="left-module-container">
+            <div id="hold" class="module" ng-controller="holdController">
+              <piece ng-if="manager.heldPiece" points="manager.heldPiece.points" color="manager.heldPiece.color" scale="settings.scale"></piece>
+              <p ng-if="!manager.heldPiece">Press <span>h</span> to hold a piece here for later use</p>
+            </div>
             <div id="score" class="module" ng-controller="scoreController">
               <p>Score: <span>{{score.score}}</span></p>
               <p>Level: <span>{{score.level}}</span></p>

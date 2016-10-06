@@ -2,6 +2,7 @@ angular.module('tetrisGame').factory('faller', ['grid', '$timeout', function(gri
   var faller = {};
 
   faller.reFall = function(piece, start) {
+    this.source = piece;
     this.position = {x:Math.floor((grid.width - 1)/2), y:piece.topOffset};
     this.aboutToFix = false;
     this.landAttempts = 0;

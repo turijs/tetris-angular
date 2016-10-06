@@ -6,3 +6,8 @@ angular.module('tetrisGame').controller('upcomingController', ['$scope', 'pieceM
 angular.module('tetrisGame').controller('scoreController', ['$scope', 'scoreManager', function($scope, score){
   $scope.score = score;
 }]);
+
+angular.module('tetrisGame').controller('holdController', ['$scope', 'pieceManager', 'settings', function($scope, manager, settings){
+  $scope.scale = settings.scale;
+  $scope.manager = manager;
+}]);
