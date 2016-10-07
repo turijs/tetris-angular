@@ -1,9 +1,23 @@
 angular.module('tetrisGame').factory('pieceManager', [function() {
   var manager = {};
 
-  function Piece(points, color) {
-    this.points = points;
+  /**/ var _id = -1; /**/
+  var Piece = manager.Piece = function Piece(points, color, even) {
+    this.id = ++_id;
+    this.updateProps(points, color, even)
+  }
+  Piece.prototype.updateProps = function(points, color, even) {
+    /* o allows pivot to be accessed inside following functions */
+    var o = this.pivot = even ? {x:0.5, y:-0.5} : {x:0, y:0};
+    /* sort the points by distance from center */
+    this.points = points.sort(function(a, b){
+      return getDist(a) - getDist(b);
+      function getDist(p) {
+        return Math.pow(p.x - o.x, 2) + Math.pow(p.y - o.y, 2);
+      }
+    });
     this.color = color;
+    this.isEven = even ? true : false;
     this.topOffset = this.getTopOffset();
     this.spread = this.getSpread();
   }
@@ -12,11 +26,13 @@ angular.module('tetrisGame').factory('pieceManager', [function() {
       return curr.y;
     }));
   };
+  /* distance of the farthest block from the center */
   Piece.prototype.getSpread = function() {
+    var center = this.pivot;
     return Math.max.apply(null, this.points.map(function(curr){
       return Math.max(
-        Math.abs(curr.x),
-        Math.abs(curr.y)
+        Math.ceil(Math.abs(curr.x - center.x)),
+        Math.ceil(Math.abs(curr.y - center.y))
       );
     }));
   };
@@ -40,37 +56,13 @@ angular.module('tetrisGame').factory('pieceManager', [function() {
     return this;
   };
   Piece.prototype.rotateCW = function(center) {
-    center = center || {x:0, y:0};
+    center = center || this.pivot;
     this.points = this.points.map(function(pt){
       return {x: pt.y - center.y + center.x, y: center.x - pt.x + center.y};
     });
     return this;
   };
 
-
-  function EvenPiece(points, color) {
-    Piece.call(this, points, color);
-  }
-  /* EvenPiece inherits from Piece */
-  EvenPiece.prototype = Object.create(Piece.prototype);
-
-  EvenPiece.prototype.getSpread = function() {
-    return Math.max.apply(null, this.points.map(function(curr){
-      return Math.max(
-        Math.ceil(Math.abs(curr.x - 0.5)),
-        Math.ceil(Math.abs(curr.y + 0.5))
-      );
-    }));
-  };
-  EvenPiece.prototype.rotateCW = function(center) {
-    center = center || {x:0.5, y:-0.5};
-
-    this.points = this.points.map(function(pt){
-      return {x: pt.y - center.y + center.x, y: center.x - pt.x + center.y};
-    });
-
-    return this;
-  };
 
 
 
@@ -78,18 +70,18 @@ angular.module('tetrisGame').factory('pieceManager', [function() {
     new Piece(
       [{x:0, y:0}, {x:-1, y:0}, {x:1, y:0},{x:0, y:1}],
       'purple'),
-    new EvenPiece(
+    new Piece(
       [{x:0,y:0}, {x:-1,y:0}, {x:1,y:0}, {x:2,y:0}],
-      'cyan'),
+      'cyan', true /* even */),
     new Piece(
       [{x:0,y:0}, {x:-1,y:0}, {x:-1,y:1}, {x:1,y:0}],
       'blue'),
     new Piece(
       [{x:0,y:0}, {x:-1,y:0}, {x:1,y:0}, {x:1,y:1}],
       'orange'),
-    new EvenPiece(
+    new Piece(
       [{x:0,y:0}, {x:1,y:0}, {x:0,y:-1}, {x:1,y:-1}],
-      'yellow'),
+      'yellow', true),
     new Piece(
       [{x:0,y:0}, {x:-1,y:0}, {x:0,y:1}, {x:1,y:1}],
       'lime'),
@@ -102,7 +94,7 @@ angular.module('tetrisGame').factory('pieceManager', [function() {
 
   manager.heldPiece = null;
 
-  var id = -1;
+
 
   manager.queuePiece = function(n) {
     /* n: number of pieces to queue (optional) */
@@ -111,20 +103,14 @@ angular.module('tetrisGame').factory('pieceManager', [function() {
     for(var i = 0; i < n; i++) {
       var index = Math.floor(Math.random()*this.pieceTypes.length);
 
-      var itm = {
-        piece: this.pieceTypes[index],
-        /* assign an ID # to uniquely identify each item in the queue */
-        id: ++id
-      };
-
-      this.upcomingPieces.push(itm);
+      this.upcomingPieces.push(this.pieceTypes[index]);
     }
   };
 
   manager.getNextPiece = function() {
     this.queuePiece();
 
-    return this.upcomingPieces.shift().piece;
+    return this.upcomingPieces.shift();
   };
 
   manager.flushQueue = function() {

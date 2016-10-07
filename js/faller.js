@@ -12,6 +12,7 @@ angular.module('tetrisGame').factory('faller', ['grid', '$timeout', function(gri
     this.points = piece.points;
     this.color = piece.color;
     this.spread = piece.spread;
+    this.pivot = piece.pivot;
     this.moveRight = piece.moveRight;
     this.moveLeft = piece.moveLeft;
     this.moveDown = piece.moveDown;

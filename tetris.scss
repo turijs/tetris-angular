@@ -10,6 +10,7 @@ $bgColor: rgb(38,38,38);
 }
 body {
   font-family: Arial, sans-serif;
+  font-family: "Lucida Console", Monaco, monospace;
 }
 #game {
   margin-top: 20px;
@@ -21,8 +22,7 @@ body {
 }
 #board {
   position: relative;
-
-  //margin: 20px auto;
+  padding:0;
 }
 #fallerWrap {
   z-index:100;
@@ -78,10 +78,10 @@ body {
   border-radius: 4px;
   background-color: $bgColor;
   color: gray;
+  padding: 0 25px;
 }
 
 #upcoming-pieces {
-  padding: 0 25px;
   position: absolute;
   top: 0;
   left: 105%;
@@ -108,19 +108,21 @@ body {
   p span {
     font-family: 'Bungee', sans-serif;
   }
+  .static-piece {
+    margin: 0 auto;
+  }
 }
 #score {
-  font-family: 'Bungee', sans-serif;
-  font-size: 14px;
   padding: 15px 25px;
   position: absolute;
   top: 300px;
   right: 0;
   width: 90px;
-
+}
+.score-view {
+  font-family: 'Bungee', sans-serif;
+  font-size: 14px;
   p {
-    padding: 5px 0;
-
     span {
       font-size: 20px;
       color: rgb(102,158,162);
@@ -193,6 +195,17 @@ h1 {
   letter-spacing: 1px;
   margin: 40px 0;
 }
+h2 {
+  margin: 15px 0;
+  font-family: 'Bungee', sans-serif;
+}
+
+p {padding: 5px 0;}
+
+p.small {
+  font-size: 10px;
+  padding: 2px 0;
+}
 
 
 button {
@@ -207,24 +220,147 @@ button {
   transition: opacity .4s ease;
 
 }
-
 button:hover {
   opacity: .7;
 }
-
 button:disabled {
   background: rgb(138,138,138);
   opacity: .3!important;
   cursor: default;
 }
 
+button.small {
+  padding: 10px;
+  font-size: 12px;
+}
+
+input {
+  background: gray;
+  border-radius: 4px;
+  border: none;
+  padding: 3px;
+  color: $bgColor;
+}
+
 #pause {
-  width: 300px;
-  height: 440px;
+  padding-bottom: 20px;
 }
 
 #pause button {
   display: block;
   margin: 20px auto;
   width: 250px;
+}
+
+/*************** Settings ***************/
+#settings {
+  width: 430px;
+  text-align: left;
+}
+#settings input[type=number] {
+  width:30px;
+}
+
+.panel {
+  text-align: left;
+  display: inline-block;
+  vertical-align: top;
+  margin-bottom: 10px;
+}
+#board-size {
+  margin-right: 30px;
+}
+
+.edit-buttons {
+  margin: 10px 0;
+}
+#availablePieces {
+  padding: 0;
+}
+
+#availablePieces .static-piece {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 10px;
+  border: 2px solid transparent;
+}
+#availablePieces .static-piece.selected {
+  transform: scale(1.1);
+  border: 2px solid white;
+  border-radius: 5px;
+}
+
+.main-button-wrapper {
+  text-align: center;
+  margin: 25px;
+}
+.main-button-wrapper button {
+  margin: 10px;
+}
+button.save {
+  background: lime;
+}
+
+/************* Piece Editor *************/
+#piece-editor {
+  text-align: left;
+}
+select {
+  background: gray;
+  border: none;
+}
+select:disabled {
+  opacity: .3;
+}
+color-picker {
+  display: inline-block;
+  vertical-align: middle;
+
+
+  .color-picker-swatch {
+    border: none !important;
+    border-radius: 5px 0 0 5px;
+  }
+  input {
+    width: 100px;
+    border-radius: 0 5px 5px 0;
+  }
+}
+color-picker[disabled=disabled] {
+  pointer-events: none;
+  opacity: 0.3 !important;
+}
+#edit-shape {
+  width: 100%;
+  text-align: center;
+
+  h2 {
+    text-align: left;
+  }
+}
+.editor-grid-wrap {
+  display: inline-block;
+  position: relative;
+}
+.pivot-indicator {
+  background: white;
+  position: absolute;
+  left: 50%; top: 50%;
+  height: 4px; width: 4px;
+  margin-left: -2px; margin-top: -2px;
+  border-radius: 2px;
+  pointer-events: none;
+}
+.editor-grid {
+
+  border-right: 1px solid gray;
+  border-bottom: 1px solid gray;
+}
+.editor-row {
+  height: 31px;
+}
+.editor-block {
+  float: left;
+  width:30px; height:30px;
+  border-top: 1px solid gray; border-left:1px solid gray;
 }
