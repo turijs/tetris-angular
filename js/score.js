@@ -1,5 +1,7 @@
 angular.module('tetrisGame').factory('scoreManager', [function(){
   var score = {};
+  /* storageManager will try to retrieve highscore, for now set to 0 */
+  score.high = 0;
 
   score.clear = function() {
     this.score = 0;
@@ -18,18 +20,24 @@ angular.module('tetrisGame').factory('scoreManager', [function(){
     else if(n >= 4)
       score += 400;
 
-    this.score += scoreToAdd*this.level;
+    this.addScore(scoreToAdd);
 
     if(this.totalRows >= this.level*12)
       this.level++;
   }
 
   score.softDropped = function(n) {
-    this.score += n*this.level;
+    this.addScore(n);
   }
 
   score.hardDropped = function(n) {
-    this.score += n*2*this.level;
+    this.addScore(2*n);
+  }
+
+  score.addScore = function(score) {
+    this.score += score*this.level;
+    /* update highscore if necessary */
+    if(this.score > this.high) this.high = this.score;
   }
 
   return score;

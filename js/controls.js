@@ -1,4 +1,4 @@
-angular.module('tetrisGame').controller('gameControls', ['$scope', 'gameManager', 'pieceManager', 'uiState', 'settings', 'scoreManager', function($scope, game, pieceManager, ui, settings, score) {
+angular.module('tetrisGame').controller('gameControls', ['$scope', 'gameManager', 'pieceManager', 'uiState', 'settings', 'scoreManager', 'storageManager', function($scope, game, pieceManager, ui, settings, score, storage) {
   /* start game when page is loaded */
   game.restart();
 
@@ -39,6 +39,9 @@ angular.module('tetrisGame').controller('gameControls', ['$scope', 'gameManager'
     newSettings.save = function() {
       settings.transfer(newSettings, settings);
       pieceManager.pieceTypes = tempPieceManager.pieces;
+
+      storage.saveSettings();
+
       ui.setState('pause');
     }
     newSettings.kb = {27: {fn: function(){ui.setState('pause')}}};

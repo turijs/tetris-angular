@@ -1,4 +1,4 @@
-angular.module('tetrisGame').factory('gameManager', ['grid', 'faller', 'pieceManager', 'scoreManager', 'settings', '$document', '$timeout','$interval', function(grid, faller, pieceManager, score, settings, $document, $timeout, $interval){
+angular.module('tetrisGame').factory('gameManager', ['grid', 'faller', 'pieceManager', 'scoreManager', 'settings', 'storageManager', '$document', '$timeout','$interval', function(grid, faller, pieceManager, score, settings, storage, $document, $timeout, $interval){
   var game = {};
 
   game.isRunning = true;
@@ -117,7 +117,7 @@ angular.module('tetrisGame').factory('gameManager', ['grid', 'faller', 'pieceMan
 
       /* No more room? Game over */
       if(self.findCollision(faller)) {
-        game.isRunning = false;
+        game.pause();
         game.isEnded = true;
       }
 
@@ -176,6 +176,8 @@ angular.module('tetrisGame').factory('gameManager', ['grid', 'faller', 'pieceMan
 
   game.pause = function() {
     game.isRunning = false;
+    /* instead of constantly saving highscore, do so only on pause */
+    storage.saveHighscore();
   }
   game.resume = function() {
     game.isRunning = true;
