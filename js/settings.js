@@ -5,9 +5,16 @@ angular.module('tetrisGame').factory('settings', function(){
   settings.borderWidth = 1;
   settings.gridWidth = 12;
   settings.gridHeight = 20;
+  
   settings.applyScale = function(n, neg) {
     return (n*(settings.scale + settings.borderWidth)*(neg ? -1 : 1)) + 'px';
   };
+
+  settings.transfer = function(fromObj, toObj) {
+    toObj.scale = fromObj.scale;
+    toObj.gridWidth = fromObj.gridWidth;
+    toObj.gridHeight = fromObj.gridHeight;
+  }
 
   return settings;
 });

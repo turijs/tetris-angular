@@ -33,24 +33,31 @@
         <div id="ctrlWrap" ng-controller="gameControls">
           <div id="ctrlLayer" ng-if="ui.state != 'game'" ng-switch="ui.state">
             <div id="pause" class="module overlay" ng-switch-when="pause" kb-control="{27: {fn: resume}}">
-              <h1>{{pauseMsg()}}</h1>
-              <button id="button-resume" class="green" ng-click="resume()" ng-disabled="game.isEnded">Resume</button>
-              <button id="button-new" class="red" ng-click="new()">New Game</button>
-              <button id="button-settings" class="cyan" ng-click="ui.setState('settings')">Settings</button>
+              <h1>{{pause.msg()}}</h1>
+              <button id="button-resume" class="green" ng-click="pause.resume()" ng-disabled="game.isEnded">Resume</button>
+              <button id="button-new" class="red" ng-click="pause.new()">New Game</button>
+              <button id="button-settings" class="cyan" ng-click="pause.settings()">Settings</button>
             </div>
 
             <div id="settings" class="module overlay" ng-switch-when="settings">
               <h1>Settings</h1>
               <div class="panel">
                 <h2>Board Size</h2>
+                <p>Width: <input type="number" ng-model="newSettings.gridWidth"> units</p>
+                <p>Height: <input type="number" ng-model="newSettings.gridHeight"> units</p>
               </div>
               <div class="panel">
                 <h2>Game Scale</h2>
+                <p>1 unit = <input type="number" ng-model="newSettings.scale"> pixels</p>
               </div>
               <div class="panel">
                 <h2>Pieces</h2>
+                <div class="module">
+                  <piece ng-repeat="piece in newSettings.pieces" points="piece.points" color="piece.color" scale="20"></piece>
+                </div>
               </div>
               <div class="button-wrapper">
+                <hr>
                 <button>Cancel</button>
                 <button>Save</button>
               </div>
@@ -90,7 +97,7 @@
           </div>
 
           <div id="upcoming-pieces" class="module" ng-controller="upcomingController">
-            <piece ng-repeat="itm in upcoming track by $index" points="itm.piece.points" color="itm.piece.color" scale="settings.scale"></piece>
+            <piece ng-repeat="piece in upcoming track by $index" points="piece.points" color="piece.color" scale="settings.scale"></piece>
           </div>
 
           <div id="left-module-container">
