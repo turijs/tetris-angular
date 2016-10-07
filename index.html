@@ -11,6 +11,7 @@
     <script src="js/faller.js"></script>
     <script src="js/game-manager.js"></script>
     <script src="js/grid.js"></script>
+    <script src="js/local-storage.js"></script>
     <script src="js/piece-manager.js"></script>
     <script src="js/score.js"></script>
     <script src="js/settings.js"></script>
@@ -166,7 +167,8 @@
             <div class="score-view">
               <p>Score: <span>{{score.score}}</span></p>
               <p>Level: <span>{{score.level}}</span></p>
-              <p>Rows: <span>{{score.totalRows}}</span></p>
+              <p>Rows: <span>{{score.totalRows}}</span></p><br>
+              <p>Highscore: <span style="color:rgb(130,104,153)">{{score.high}}</span></p>
             </div>
           </div>
         </div>
