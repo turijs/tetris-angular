@@ -37,7 +37,12 @@
         <div id="ctrlLayer" ng-if="ui.state != 'game'" ng-switch="ui.state">
           <div id="pause" class="module overlay" ng-switch-when="pause" kb-control="pause.kb">
             <h1>{{pause.msg()}}</h1>
-            <button id="button-resume" class="lime" ng-click="pause.resume()" ng-disabled="game.isEnded">Resume</button>
+            <div class="score-view" ng-if="game.isEnded">
+              <p>Score: <span>{{score.score}}</span></p>
+              <p>Level: <span>{{score.level}}</span></p>
+              <p>Rows: <span>{{score.totalRows}}</span></p>
+            </div>
+            <button id="button-resume" class="lime" ng-click="pause.resume()" ng-if="!game.isEnded">Resume</button>
             <button id="button-new" class="red" ng-click="pause.new()">New Game</button>
             <button id="button-settings" class="cyan" ng-click="pause.settings()">Settings</button>
           </div>
@@ -158,9 +163,11 @@
             <p ng-if="!manager.heldPiece">Press <span>h</span> to hold a piece here for later use</p>
           </div>
           <div id="score" class="module" ng-controller="scoreController">
-            <p>Score: <span>{{score.score}}</span></p>
-            <p>Level: <span>{{score.level}}</span></p>
-            <p>Rows: <span>{{score.totalRows}}</span></p>
+            <div class="score-view">
+              <p>Score: <span>{{score.score}}</span></p>
+              <p>Level: <span>{{score.level}}</span></p>
+              <p>Rows: <span>{{score.totalRows}}</span></p>
+            </div>
           </div>
         </div>
 

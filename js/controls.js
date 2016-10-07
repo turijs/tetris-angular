@@ -1,9 +1,10 @@
-angular.module('tetrisGame').controller('gameControls', ['$scope', 'gameManager', 'pieceManager', 'uiState', 'settings', function($scope, game, pieceManager, ui, settings) {
+angular.module('tetrisGame').controller('gameControls', ['$scope', 'gameManager', 'pieceManager', 'uiState', 'settings', 'scoreManager', function($scope, game, pieceManager, ui, settings, score) {
   /* start game when page is loaded */
   game.restart();
 
   $scope.ui = ui;
   $scope.game = game;
+  $scope.score = score;
 
   /* functions for the pause screen */
   var pause = $scope.pause = {};

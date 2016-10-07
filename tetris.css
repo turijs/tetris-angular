@@ -127,8 +127,6 @@ body {
 }
 
 #score {
-  font-family: 'Bungee', sans-serif;
-  font-size: 14px;
   padding: 15px 25px;
   position: absolute;
   top: 300px;
@@ -136,11 +134,12 @@ body {
   width: 90px;
 }
 
-#score p {
-  padding: 5px 0;
+.score-view {
+  font-family: 'Bungee', sans-serif;
+  font-size: 14px;
 }
 
-#score p span {
+.score-view p span {
   font-size: 20px;
   color: #669ea2;
   display: block;
@@ -276,7 +275,7 @@ input {
 }
 
 #pause {
-  height: 440px;
+  padding-bottom: 20px;
 }
 
 #pause button {
