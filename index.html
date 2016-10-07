@@ -126,8 +126,7 @@
               kb-control="controls" kb-control-enabled="game.isRunning" ng-class="{aboutToFix: faller.aboutToFix, restart: faller.restart}">
               <div class="block"
                 ng-repeat="point in faller.points"
-                ng-style="{left: applyScale(point.x), top: applyScale(point.y, true)}"
-                ng-class="faller.color">
+                ng-style="{left: applyScale(point.x), top: applyScale(point.y, true), background: faller.color}">
               </div>
             </div>
           </div>
@@ -144,7 +143,7 @@
               ng-repeat="(i, row) in viewGrid"
               ng-style="{top: applyScale(row.pos)}"
               ng-class="{cleared: row.justCleared}">
-                <div class="block" ng-repeat="(j, cell) in row.cells track by $index" ng-class="cell" ng-style="{left: applyScale(j)}"></div>
+                <div class="block" ng-repeat="(j, cell) in row.cells track by $index" ng-style="{left: applyScale(j), background: cell}"></div>
             </div>
           </div>
         </div>
