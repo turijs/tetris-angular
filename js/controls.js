@@ -29,13 +29,19 @@ angular.module('tetrisGame').controller('gameControls', ['$scope', 'gameManager'
 
       ui.setState('settings');
     }
+    pause.kb = {27: {fn: pause.resume}};
+
+
 
   /* collections of functions for settings screen */
   var newSettings = $scope.newSettings = {}
     newSettings.save = function() {
-      settings.transfer(newSettings, this);
+      settings.transfer(newSettings, settings);
+      pieceManager.pieceTypes = tempPieceManager.pieces;
       ui.setState('pause');
     }
+    newSettings.kb = {27: {fn: function(){ui.setState('pause')}}};
+
   var tempPieceManager = $scope.tempPieceManager = Object.create(pieceManager);
     tempPieceManager.registerPiece = function(points, color, even) {
       this.pieces.push(new tempPieceManager.Piece(points, color, even));
@@ -45,16 +51,7 @@ angular.module('tetrisGame').controller('gameControls', ['$scope', 'gameManager'
     };
     tempPieceManager.updatePiece = function(index, points, color, even) {
       var piece = this.pieces[index];
-      if(points)
-        piece.points = points;
-      if(color)
-        piece.color = color;
-      if(even) {
-        piece.isEven = true;
-        this.pivot = {x:0.5, y:-0.5};
-      }
-      this.topOffset = this.getTopOffset();
-      this.spread = this.getSpread();
+      piece.updateProps(points, color, even);
     };
     tempPieceManager.new = function() {
       pieceEditor.load(null);
@@ -73,6 +70,8 @@ angular.module('tetrisGame').controller('gameControls', ['$scope', 'gameManager'
 
       this.deregisterPiece(this.selected);
     }
+
+
 
   /* functions for the piece editor screen */
   var pieceEditor = $scope.pieceEditor = {};
@@ -97,6 +96,7 @@ angular.module('tetrisGame').controller('gameControls', ['$scope', 'gameManager'
         piece.points.forEach(function(pt){
           pieceEditor.gridToggle({x:pt.x + 3, y:3 - pt.y});
         });
+        console.log(pieceEditor.grid);
 
         if(!piece.isEven){
           this.toggleOddGrid();
@@ -131,8 +131,10 @@ angular.module('tetrisGame').controller('gameControls', ['$scope', 'gameManager'
       }
     }
     pieceEditor.save = function(){
-      var points, color, even = !this.hasOddGrid, index;
-      color = this.colorType == 'custom' ? this.custColor : this.preColor;
+      var points = [];
+      var color = this.colorType == 'custom' ? this.custColor : this.preColor;
+      var even = !this.hasOddGrid;
+
       for(var y = 0; y < this.grid.length; y++){
         for(var x = 0; x < this.grid[0].length; x++){
           if(this.grid[y][x]) points.push({x:x - 3, y:3 - y});
@@ -147,6 +149,12 @@ angular.module('tetrisGame').controller('gameControls', ['$scope', 'gameManager'
 
       ui.setState('settings');
     };
+    pieceEditor.getColor = function(on) {
+      if(on) {
+        return {background: this.colorType == 'custom' ? this.custColor : this.preColor}
+      }
+    }
+    pieceEditor.kb = {27: {fn: function(){ui.setState('settings')}}};
 
 
 

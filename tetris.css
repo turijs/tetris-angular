@@ -122,6 +122,10 @@ body {
   font-family: 'Bungee', sans-serif;
 }
 
+#hold .static-piece {
+  margin: 0 auto;
+}
+
 #score {
   font-family: 'Bungee', sans-serif;
   font-size: 14px;
@@ -227,6 +231,15 @@ h2 {
   font-family: 'Bungee', sans-serif;
 }
 
+p {
+  padding: 5px 0;
+}
+
+p.small {
+  font-size: 10px;
+  padding: 2px 0;
+}
+
 button {
   color: #262626;
   padding: 25px;
@@ -274,7 +287,7 @@ input {
 
 /*************** Settings ***************/
 #settings {
-  width: 400px;
+  width: 430px;
   text-align: left;
 }
 
@@ -327,18 +340,80 @@ button.save {
   background: lime;
 }
 
+/************* Piece Editor *************/
+#piece-editor {
+  text-align: left;
+}
+
+select {
+  background: gray;
+  border: none;
+}
+
+select:disabled {
+  opacity: .3;
+}
+
+color-picker {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+color-picker .color-picker-swatch {
+  border: none !important;
+  border-radius: 5px 0 0 5px;
+}
+
+color-picker input {
+  width: 100px;
+  border-radius: 0 5px 5px 0;
+}
+
+color-picker[disabled=disabled] {
+  pointer-events: none;
+  opacity: 0.3 !important;
+}
+
+#edit-shape {
+  width: 100%;
+  text-align: center;
+}
+
+#edit-shape h2 {
+  text-align: left;
+}
+
+.editor-grid-wrap {
+  display: inline-block;
+  position: relative;
+}
+
+.pivot-indicator {
+  background: white;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 4px;
+  width: 4px;
+  margin-left: -2px;
+  margin-top: -2px;
+  border-radius: 2px;
+  pointer-events: none;
+}
+
 .editor-grid {
-  border: 1px solid gray;
+  border-right: 1px solid gray;
+  border-bottom: 1px solid gray;
 }
 
 .editor-row {
-  height: 26px;
+  height: 31px;
 }
 
 .editor-block {
   float: left;
-  width: 25px;
-  height: 25px;
+  width: 30px;
+  height: 30px;
   border-top: 1px solid gray;
   border-left: 1px solid gray;
 }

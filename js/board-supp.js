@@ -1,5 +1,5 @@
 angular.module('tetrisGame').controller('upcomingController', ['$scope', 'pieceManager', 'settings', function($scope, manager, settings){
-  $scope.scale = settings.scale;
+  $scope.settings = settings;
   $scope.upcoming = manager.upcomingPieces;
 }]);
 
@@ -8,6 +8,14 @@ angular.module('tetrisGame').controller('scoreController', ['$scope', 'scoreMana
 }]);
 
 angular.module('tetrisGame').controller('holdController', ['$scope', 'pieceManager', 'settings', function($scope, manager, settings){
-  $scope.scale = settings.scale;
+  $scope.settings = settings;
   $scope.manager = manager;
+}]);
+
+/* print inline style */
+
+angular.module('tetrisGame').controller('styleController', ['$scope', 'settings', function($scope, settings){
+  $scope.getStyle = function() {
+    return ".block{width:"+settings.scale+"px;height:"+settings.scale+"px;}";
+  }
 }]);

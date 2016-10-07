@@ -11,7 +11,7 @@ angular.module('tetrisGame').directive('piece', function(){
                 '<div ng-repeat="point in points" ng-style="getBlockStyle(point)">'+
               '</div>',
     link: function(scope) {
-      if(!scope.scale) scope.scale = 30;
+    //  if(!scope.scale) scope.scale = 30;
 
       var minX, maxX, minY, maxY;
       updateMinMaxVals();

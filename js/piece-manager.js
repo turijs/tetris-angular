@@ -4,10 +4,20 @@ angular.module('tetrisGame').factory('pieceManager', [function() {
   /**/ var _id = -1; /**/
   var Piece = manager.Piece = function Piece(points, color, even) {
     this.id = ++_id;
-    this.points = points;
+    this.updateProps(points, color, even)
+  }
+  Piece.prototype.updateProps = function(points, color, even) {
+    /* o allows pivot to be accessed inside following functions */
+    var o = this.pivot = even ? {x:0.5, y:-0.5} : {x:0, y:0};
+    /* sort the points by distance from center */
+    this.points = points.sort(function(a, b){
+      return getDist(a) - getDist(b);
+      function getDist(p) {
+        return Math.pow(p.x - o.x, 2) + Math.pow(p.y - o.y, 2);
+      }
+    });
     this.color = color;
     this.isEven = even ? true : false;
-    this.pivot = even ? {x:0, y:0} : {x:0.5, y:-0.5};
     this.topOffset = this.getTopOffset();
     this.spread = this.getSpread();
   }
@@ -54,9 +64,6 @@ angular.module('tetrisGame').factory('pieceManager', [function() {
   };
 
 
-  var EvenPiece = manager.EvenPiece = function EvenPiece(points, color) {
-    Piece.call(this, points, color);
-  }
 
 
   manager.pieceTypes = [

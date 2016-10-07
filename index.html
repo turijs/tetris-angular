@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html >
+<html ng-app="tetrisGame">
   <head>
     <title>Tetris - Angular</title>
     <script type="text/javascript" src="angular.min.js"></script>
@@ -26,125 +26,147 @@
     <script src="node_modules/angularjs-color-picker/dist/angularjs-color-picker.min.js"></script>
     <link rel="stylesheet" href="node_modules/angularjs-color-picker/dist/angularjs-color-picker.css" />
 
+    <style ng-controller="styleController" ng-bind="getStyle()">
+
+    </style>
   </head>
   <body>
-    <div id="wrapper">
-      <div id="game" ng-app="tetrisGame">
-        <div id="ctrlWrap" ng-controller="gameControls">
-          <div id="ctrlLayer" ng-if="ui.state != 'game'" ng-switch="ui.state">
-            <div id="pause" class="module overlay" ng-switch-when="pause" kb-control="{27: {fn: pause.resume}}">
-              <h1>{{pause.msg()}}</h1>
-              <button id="button-resume" class="lime" ng-click="pause.resume()" ng-disabled="game.isEnded">Resume</button>
-              <button id="button-new" class="red" ng-click="pause.new()">New Game</button>
-              <button id="button-settings" class="cyan" ng-click="pause.settings()">Settings</button>
-            </div>
 
-            <div id="settings" class="module overlay" ng-switch-when="settings">
-              <h1>Settings</h1>
-              <div class="panel" id="board-size">
-                <h2>Board Size</h2>
-                <p>Width: <input type="number" step="1" ng-model="newSettings.gridWidth"> units</p>
-                <p>Height: <input type="number" step="1" ng-model="newSettings.gridHeight"> units</p>
+    <div id="game" >
+      <div id="ctrlWrap" ng-controller="gameControls">
+        <div id="ctrlLayer" ng-if="ui.state != 'game'" ng-switch="ui.state">
+          <div id="pause" class="module overlay" ng-switch-when="pause" kb-control="pause.kb">
+            <h1>{{pause.msg()}}</h1>
+            <button id="button-resume" class="lime" ng-click="pause.resume()" ng-disabled="game.isEnded">Resume</button>
+            <button id="button-new" class="red" ng-click="pause.new()">New Game</button>
+            <button id="button-settings" class="cyan" ng-click="pause.settings()">Settings</button>
+          </div>
+
+          <div id="settings" class="module overlay" ng-switch-when="settings" kb-control="newSettings.kb">
+            <h1>Settings</h1>
+            <div class="panel" id="board-size">
+              <h2>Board Size</h2>
+              <p class="small">Changes effect new game</p>
+              <p>Width: <input type="number" step="1" ng-model="newSettings.gridWidth"> units</p>
+              <p>Height: <input type="number" step="1" ng-model="newSettings.gridHeight"> units</p>
+            </div>
+            <div class="panel">
+              <h2>Game Scale</h2>
+              <p>1 unit = <input type="number" step="1" ng-model="newSettings.scale"> pixels</p>
+            </div>
+            <div class="panel">
+              <h2>Pieces</h2>
+              <div class="edit-buttons">
+                <button class="small" ng-click="tempPieceManager.new()">New</button>
+                <button class="small" ng-click="tempPieceManager.edit()" ng-disabled="tempPieceManager.selected == null">Edit</button>
+                <button class="small" ng-click="tempPieceManager.delete()" ng-disabled="tempPieceManager.selected == null">Delete</button>
               </div>
-              <div class="panel">
-                <h2>Game Scale</h2>
-                <p>1 unit = <input type="number" step="1" ng-model="newSettings.scale"> pixels</p>
-              </div>
-              <div class="panel">
-                <h2>Pieces</h2>
-                <div class="edit-buttons">
-                  <button class="small" ng-click="tempPieceManager.new()">New</button>
-                  <button class="small" ng-click="tempPieceManager.edit()" ng-disabled="tempPieceManager.selected == null">Edit</button>
-                  <button class="small" ng-click="tempPieceManager.delete()" ng-disabled="tempPieceManager.selected == null">Delete</button>
-                </div>
-                <div class="module" id="availablePieces">
-                  <piece ng-repeat="piece in tempPieceManager.pieces" ng-click="tempPieceManager.selected = $index" ng-class="{selected: tempPieceManager.selected == $index}" points="piece.points" color="piece.color" scale="25"></piece>
-                </div>
-              </div>
-              <div class="main-button-wrapper">
-                <button ng-click="ui.setState('pause')">Cancel</button>
-                <button class="save" ng-click="newSettings.save()">Save</button>
+              <div class="module" id="availablePieces">
+                <piece ng-repeat="piece in tempPieceManager.pieces" ng-click="tempPieceManager.selected = $index" ng-class="{selected: tempPieceManager.selected == $index}" points="piece.points" color="piece.color" scale="25"></piece>
               </div>
             </div>
+            <div class="main-button-wrapper">
+              <button ng-click="ui.setState('pause')">Cancel</button>
+              <button class="save" ng-click="newSettings.save()">Save</button>
+            </div>
+          </div>
 
-            <div id="piece-editor" class="module overlay" ng-switch-when="pieceEditor">
-              <h1>Piece Editor</h1>
-              <div class="panel">
-                <h2>Color</h2>
+          <div id="piece-editor" class="module overlay" ng-switch-when="pieceEditor" kb-control="pieceEditor.kb">
+            <h1>Piece Editor</h1>
+            <div class="panel">
+              <h2>Color</h2>
+              <p>
                 <input type="radio" name="color-type" value="predefined" ng-model="pieceEditor.colorType"> Predefined
-                  <select ng-model="pieceEditor.preColor">
-                    <option>red</option>
-                    <option>orange</option>
-                    <option>yellow</option>
-                    <option>lime</option>
-                    <option>blue</option>
-                    <option>cyan</option>
-                    <option>purple</option>
-                  </select>
-                  <br>
+                <select ng-model="pieceEditor.preColor" ng-disabled="pieceEditor.colorType == 'custom'">
+                  <option>red</option>
+                  <option>orange</option>
+                  <option>yellow</option>
+                  <option>lime</option>
+                  <option>blue</option>
+                  <option>cyan</option>
+                  <option>purple</option>
+                </select>
+              </p>
+              <p>
                 <input type="radio" name="color-type" value="custom" ng-model="pieceEditor.colorType"> Custom
-                  <color-picker ng-model="pieceEditor.custColor"></color-picker>
+                <color-picker ng-model="pieceEditor.custColor" options="{format: 'rgb'}" ng-disabled="pieceEditor.colorType == 'predefined'"></color-picker>
+              </p>
+            </div>
+            <div class="panel" id="edit-shape">
+              <h2>Shape</h2>
+              <div class="edit-buttons">
+                <button class="small" ng-click="pieceEditor.toggleOddGrid()">
+                  {{pieceEditor.hasOddGrid ? 'Use even grid' : 'Use odd grid'}}
+                </button>
               </div>
-              <div class="panel" id="editor-grid-wrap">
+              <div class="editor-grid-wrap">
                 <div class="editor-grid">
-                  <div class="editor-row" ng-repeat="row in pieceEditor.grid">
-                    <div class="editor-block" ng-repeat="cell in row track by $index"></div>
+                  <div class="editor-row" ng-repeat="(y, row) in pieceEditor.grid">
+                    <div class="editor-block" ng-repeat="(x, cell) in row track by $index" ng-style="pieceEditor.getColor(cell)" ng-click="pieceEditor.gridToggle({x:x,y:y})"></div>
                   </div>
                 </div>
+                <div class="pivot-indicator"> </div>
               </div>
+              <p class="small">Click in grid to define shape<br>White dot indicates pivot point</p>
+            </div>
+
+            <div class="main-button-wrapper">
+              <button ng-click="ui.setState('settings')">Cancel</button>
+              <button class="save" ng-click="pieceEditor.save()">Save</button>
             </div>
           </div>
-        </div>
-
-        <div id="boardWrap">
-          <div id="board" class="module" ng-controller="gridController" ng-style="{width:applyScale(modelGrid.width), height:applyScale(modelGrid.height)}">
-            <div id="fallerWrap" ng-controller="fallerController">
-              <div id="faller"
-                ng-style="{left: applyScale(faller.position.x), top: applyScale(faller.position.y)}"
-                kb-control="controls" kb-control-enabled="game.isRunning" ng-class="{aboutToFix: faller.aboutToFix, restart: faller.restart}">
-                <div class="block"
-                  ng-repeat="point in faller.points"
-                  ng-style="{left: applyScale(point.x), top: applyScale(point.y, true)}"
-                  ng-class="faller.color">
-                </div>
-              </div>
-            </div>
-            <div id="BGGrid">
-              <div class="row"
-                ng-repeat="(i, row) in BGGrid"
-                ng-style="{top: applyScale(i)}">
-                  <div class="block" ng-repeat="(j, cell) in row track by $index" ng-style="{left: applyScale(j)}">
-                  </div>
-              </div>
-            </div>
-            <div id="viewGrid" >
-              <div class="row"
-                ng-repeat="(i, row) in viewGrid"
-                ng-style="{top: applyScale(row.pos)}"
-                ng-class="{cleared: row.justCleared}">
-                  <div class="block" ng-repeat="(j, cell) in row.cells track by $index" ng-class="cell" ng-style="{left: applyScale(j)}" ng-click="modelGrid.set({x: j, y: row.pos}, 'red')"></div>
-              </div>
-            </div>
-          </div>
-
-          <div id="upcoming-pieces" class="module" ng-controller="upcomingController">
-            <piece ng-repeat="piece in upcoming track by $index" points="piece.points" color="piece.color" scale="settings.scale"></piece>
-          </div>
-
-          <div id="left-module-container">
-            <div id="hold" class="module" ng-controller="holdController">
-              <piece ng-if="manager.heldPiece" points="manager.heldPiece.points" color="manager.heldPiece.color" scale="settings.scale"></piece>
-              <p ng-if="!manager.heldPiece">Press <span>h</span> to hold a piece here for later use</p>
-            </div>
-            <div id="score" class="module" ng-controller="scoreController">
-              <p>Score: <span>{{score.score}}</span></p>
-              <p>Level: <span>{{score.level}}</span></p>
-              <p>Rows: <span>{{score.totalRows}}</span></p>
-            </div>
-          </div>
-
         </div>
       </div>
+
+      <div id="boardWrap">
+        <div id="board" class="module" ng-controller="gridController" ng-style="{width:applyScale(modelGrid.width), height:applyScale(modelGrid.height)}">
+          <div id="fallerWrap" ng-controller="fallerController">
+            <div id="faller"
+              ng-style="{left: applyScale(faller.position.x), top: applyScale(faller.position.y)}"
+              kb-control="controls" kb-control-enabled="game.isRunning" ng-class="{aboutToFix: faller.aboutToFix, restart: faller.restart}">
+              <div class="block"
+                ng-repeat="point in faller.points"
+                ng-style="{left: applyScale(point.x), top: applyScale(point.y, true)}"
+                ng-class="faller.color">
+              </div>
+            </div>
+          </div>
+          <div id="BGGrid">
+            <div class="row"
+              ng-repeat="(i, row) in BGGrid"
+              ng-style="{top: applyScale(i)}">
+                <div class="block" ng-repeat="(j, cell) in row track by $index" ng-style="{left: applyScale(j)}">
+                </div>
+            </div>
+          </div>
+          <div id="viewGrid" >
+            <div class="row"
+              ng-repeat="(i, row) in viewGrid"
+              ng-style="{top: applyScale(row.pos)}"
+              ng-class="{cleared: row.justCleared}">
+                <div class="block" ng-repeat="(j, cell) in row.cells track by $index" ng-class="cell" ng-style="{left: applyScale(j)}"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="upcoming-pieces" class="module" ng-controller="upcomingController">
+          <piece ng-repeat="piece in upcoming track by $index" points="piece.points" color="piece.color" scale="settings.scale"></piece>
+        </div>
+
+        <div id="left-module-container">
+          <div id="hold" class="module" ng-controller="holdController">
+            <piece ng-if="manager.heldPiece" points="manager.heldPiece.points" color="manager.heldPiece.color" scale="settings.scale"></piece>
+            <p ng-if="!manager.heldPiece">Press <span>h</span> to hold a piece here for later use</p>
+          </div>
+          <div id="score" class="module" ng-controller="scoreController">
+            <p>Score: <span>{{score.score}}</span></p>
+            <p>Level: <span>{{score.level}}</span></p>
+            <p>Rows: <span>{{score.totalRows}}</span></p>
+          </div>
+        </div>
+
+      </div>
     </div>
+
   </body>
 </html>
