@@ -32,34 +32,65 @@
       <div id="game" ng-app="tetrisGame">
         <div id="ctrlWrap" ng-controller="gameControls">
           <div id="ctrlLayer" ng-if="ui.state != 'game'" ng-switch="ui.state">
-            <div id="pause" class="module overlay" ng-switch-when="pause" kb-control="{27: {fn: resume}}">
+            <div id="pause" class="module overlay" ng-switch-when="pause" kb-control="{27: {fn: pause.resume}}">
               <h1>{{pause.msg()}}</h1>
-              <button id="button-resume" class="green" ng-click="pause.resume()" ng-disabled="game.isEnded">Resume</button>
+              <button id="button-resume" class="lime" ng-click="pause.resume()" ng-disabled="game.isEnded">Resume</button>
               <button id="button-new" class="red" ng-click="pause.new()">New Game</button>
               <button id="button-settings" class="cyan" ng-click="pause.settings()">Settings</button>
             </div>
 
             <div id="settings" class="module overlay" ng-switch-when="settings">
               <h1>Settings</h1>
-              <div class="panel">
+              <div class="panel" id="board-size">
                 <h2>Board Size</h2>
-                <p>Width: <input type="number" ng-model="newSettings.gridWidth"> units</p>
-                <p>Height: <input type="number" ng-model="newSettings.gridHeight"> units</p>
+                <p>Width: <input type="number" step="1" ng-model="newSettings.gridWidth"> units</p>
+                <p>Height: <input type="number" step="1" ng-model="newSettings.gridHeight"> units</p>
               </div>
               <div class="panel">
                 <h2>Game Scale</h2>
-                <p>1 unit = <input type="number" ng-model="newSettings.scale"> pixels</p>
+                <p>1 unit = <input type="number" step="1" ng-model="newSettings.scale"> pixels</p>
               </div>
               <div class="panel">
                 <h2>Pieces</h2>
-                <div class="module">
-                  <piece ng-repeat="piece in newSettings.pieces" points="piece.points" color="piece.color" scale="20"></piece>
+                <div class="edit-buttons">
+                  <button class="small" ng-click="tempPieceManager.new()">New</button>
+                  <button class="small" ng-click="tempPieceManager.edit()" ng-disabled="tempPieceManager.selected == null">Edit</button>
+                  <button class="small" ng-click="tempPieceManager.delete()" ng-disabled="tempPieceManager.selected == null">Delete</button>
+                </div>
+                <div class="module" id="availablePieces">
+                  <piece ng-repeat="piece in tempPieceManager.pieces" ng-click="tempPieceManager.selected = $index" ng-class="{selected: tempPieceManager.selected == $index}" points="piece.points" color="piece.color" scale="25"></piece>
                 </div>
               </div>
-              <div class="button-wrapper">
-                <hr>
-                <button>Cancel</button>
-                <button>Save</button>
+              <div class="main-button-wrapper">
+                <button ng-click="ui.setState('pause')">Cancel</button>
+                <button class="save" ng-click="newSettings.save()">Save</button>
+              </div>
+            </div>
+
+            <div id="piece-editor" class="module overlay" ng-switch-when="pieceEditor">
+              <h1>Piece Editor</h1>
+              <div class="panel">
+                <h2>Color</h2>
+                <input type="radio" name="color-type" value="predefined" ng-model="pieceEditor.colorType"> Predefined
+                  <select ng-model="pieceEditor.preColor">
+                    <option>red</option>
+                    <option>orange</option>
+                    <option>yellow</option>
+                    <option>lime</option>
+                    <option>blue</option>
+                    <option>cyan</option>
+                    <option>purple</option>
+                  </select>
+                  <br>
+                <input type="radio" name="color-type" value="custom" ng-model="pieceEditor.colorType"> Custom
+                  <color-picker ng-model="pieceEditor.custColor"></color-picker>
+              </div>
+              <div class="panel" id="editor-grid-wrap">
+                <div class="editor-grid">
+                  <div class="editor-row" ng-repeat="row in pieceEditor.grid">
+                    <div class="editor-block" ng-repeat="cell in row track by $index"></div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

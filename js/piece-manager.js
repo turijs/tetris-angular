@@ -18,10 +18,11 @@ angular.module('tetrisGame').factory('pieceManager', [function() {
   };
   /* distance of the farthest block from the center */
   Piece.prototype.getSpread = function() {
+    var center = this.pivot;
     return Math.max.apply(null, this.points.map(function(curr){
       return Math.max(
-        Math.ceil(Math.abs(curr.x - this.pivot.x)),
-        Math.ceil(Math.abs(curr.y - this.pivot.y))
+        Math.ceil(Math.abs(curr.x - center.x)),
+        Math.ceil(Math.abs(curr.y - center.y))
       );
     }));
   };

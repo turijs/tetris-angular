@@ -10,6 +10,7 @@ $bgColor: rgb(38,38,38);
 }
 body {
   font-family: Arial, sans-serif;
+  font-family: "Lucida Console", Monaco, monospace;
 }
 #game {
   margin-top: 20px;
@@ -21,8 +22,7 @@ body {
 }
 #board {
   position: relative;
-
-  //margin: 20px auto;
+  padding:0;
 }
 #fallerWrap {
   z-index:100;
@@ -78,10 +78,10 @@ body {
   border-radius: 4px;
   background-color: $bgColor;
   color: gray;
+  padding: 0 25px;
 }
 
 #upcoming-pieces {
-  padding: 0 25px;
   position: absolute;
   top: 0;
   left: 105%;
@@ -193,6 +193,10 @@ h1 {
   letter-spacing: 1px;
   margin: 40px 0;
 }
+h2 {
+  margin: 15px 0;
+  font-family: 'Bungee', sans-serif;
+}
 
 
 button {
@@ -207,19 +211,30 @@ button {
   transition: opacity .4s ease;
 
 }
-
 button:hover {
   opacity: .7;
 }
-
 button:disabled {
   background: rgb(138,138,138);
   opacity: .3!important;
   cursor: default;
 }
 
+button.small {
+  padding: 10px;
+  font-size: 12px;
+}
+
+input {
+  background: gray;
+  border-radius: 4px;
+  border: none;
+  padding: 3px;
+  color: $bgColor;
+}
+
 #pause {
-  width: 300px;
+  //width: 300px;
   height: 440px;
 }
 
@@ -227,4 +242,68 @@ button:disabled {
   display: block;
   margin: 20px auto;
   width: 250px;
+}
+
+/*************** Settings ***************/
+#settings {
+  width: 400px;
+  text-align: left;
+}
+#settings input[type=number] {
+  width:30px;
+}
+
+.panel {
+  text-align: left;
+  display: inline-block;
+  vertical-align: top;
+  margin-bottom: 10px;
+}
+#board-size {
+  margin-right: 30px;
+}
+
+.edit-buttons {
+  margin: 10px 0;
+}
+#availablePieces {
+  padding: 0;
+}
+
+#availablePieces .static-piece {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 10px;
+  border: 2px solid transparent;
+}
+#availablePieces .static-piece.selected {
+  transform: scale(1.1);
+  border: 2px solid white;
+  border-radius: 5px;
+}
+
+.main-button-wrapper {
+  text-align: center;
+  margin: 25px;
+}
+.main-button-wrapper button {
+  margin: 10px;
+}
+button.save {
+  background: lime;
+}
+
+// #editor-grid-wrap {
+//   width: 100%;
+// }
+.editor-grid {
+  border: 1px solid gray;
+}
+.editor-row {
+  height: 26px;
+}
+.editor-block {
+  float: left;
+  width:25px; height:25px;
+  border-top: 1px solid gray; border-left:1px solid gray;
 }

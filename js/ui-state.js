@@ -5,6 +5,7 @@ angular.module('tetrisGame').factory('uiState', ['gameManager', function(game){
     if(state == "game" && game.ended) return false;
 
     this.state = state;
+    console.log(this.state);
   }
 
   ui.setState('game');
