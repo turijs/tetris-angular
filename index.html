@@ -118,7 +118,7 @@
 
             <div class="main-button-wrapper">
               <button ng-click="ui.setState('settings')">Cancel</button>
-              <button class="save" ng-click="pieceEditor.save()">Save</button>
+              <button class="save" ng-click="pieceEditor.save()" ng-disabled="pieceEditor.gridEmpty">Save</button>
             </div>
           </div>
         </div>

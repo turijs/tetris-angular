@@ -85,6 +85,7 @@ angular.module('tetrisGame').controller('gameControls', ['$scope', 'gameManager'
         return new Array(8).fill(false);
       });
       this.hasOddGrid = false;
+      this.gridEmpty = true;
 
       /* setup default color selections */
       this.colorType = 'predefined';
@@ -100,7 +101,7 @@ angular.module('tetrisGame').controller('gameControls', ['$scope', 'gameManager'
         piece.points.forEach(function(pt){
           pieceEditor.gridToggle({x:pt.x + 3, y:3 - pt.y});
         });
-        console.log(pieceEditor.grid);
+        this.gridEmpty = false;
 
         if(!piece.isEven){
           this.toggleOddGrid();
@@ -115,7 +116,16 @@ angular.module('tetrisGame').controller('gameControls', ['$scope', 'gameManager'
       }
     };
     pieceEditor.gridToggle = function(vec){
-      this.grid[vec.y][vec.x] = !this.grid[vec.y][vec.x];
+      var on = this.grid[vec.y][vec.x] = !this.grid[vec.y][vec.x];
+      /* Now we need to determine whether the grid is empty */
+      if(on) return this.gridEmpty = false;
+      /* Otherwise check the long way... */
+      this.gridEmpty = function(grid){
+        for(var y = 0; y < grid.length; y++)
+          for(var x = 0; x < grid[0].length; x++)
+            if(grid[y][x]) return false;
+        return true;
+      }(pieceEditor.grid);
     }
     pieceEditor.toggleOddGrid = function(){
       if(this.hasOddGrid) {
@@ -139,11 +149,11 @@ angular.module('tetrisGame').controller('gameControls', ['$scope', 'gameManager'
       var color = this.colorType == 'custom' ? this.custColor : this.preColor;
       var even = !this.hasOddGrid;
 
-      for(var y = 0; y < this.grid.length; y++){
-        for(var x = 0; x < this.grid[0].length; x++){
+      for(var y = 0; y < this.grid.length; y++)
+        for(var x = 0; x < this.grid[0].length; x++)
           if(this.grid[y][x]) points.push({x:x - 3, y:3 - y});
-        }
-      }
+
+
 
       if(this.curPieceIndex !== null){
         tempPieceManager.updatePiece(this.curPieceIndex, points, color, even);
