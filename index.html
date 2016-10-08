@@ -40,7 +40,7 @@
 
     <div id="game" >
       <div id="ctrlWrap" ng-controller="gameControls">
-        <div id="ctrlLayer" ng-if="ui.state != 'game'" ng-switch="ui.state">
+        <div id="ctrlLayer" class="fadein" ng-if="ui.state != 'game'" ng-switch="ui.state">
           <div id="pause" class="module overlay" ng-switch-when="pause" kb-control="pause.kb">
             <h1>{{pause.msg()}}</h1>
             <div class="score-view" ng-if="game.isEnded">

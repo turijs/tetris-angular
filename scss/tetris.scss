@@ -163,6 +163,18 @@ body {
   top: 0; bottom:0; left: 0; right: 0;
   z-index: 200;
   background: rgba(50,50,50,.77);
+
+}
+#ctrlLayer.ng-enter, #ctrlLayer.ng-leave {
+  transition: opacity .1s linear;
+}
+#ctrlLayer.ng-enter,
+#ctrlLayer.ng-leave.ng-leave-active {
+  opacity: 0;
+}
+#ctrlLayer.ng-leave,
+#ctrlLayer.ng-enter.ng-enter-active {
+  opacity: 1;
 }
 
 .module.overlay {
@@ -172,6 +184,9 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+// .module.overlay.ng-enter {
+//   animation: open .3s ease;
+// }
 
 h1 {
   text-align: center;
@@ -278,7 +293,7 @@ input {
 
 .main-button-wrapper {
   text-align: center;
-  margin: 25px;
+  margin: 20px;
 }
 .main-button-wrapper button {
   margin: 10px;

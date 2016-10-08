@@ -22,3 +22,17 @@
     opacity: 1;
   }
 }
+
+@keyframes open {
+  0% {
+    opacity: 0;
+    transform: scale(0) translate(-50%, -50%);
+  }
+  85% {
+    opacity: 1;
+    transform: scale(1.05) translate(-50%, -50%);
+  }
+  100% {
+    transform: scale(1) translate(-50%, -50%);
+  }
+}

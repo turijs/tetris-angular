@@ -1,1 +1,1 @@
-angular.module('tetrisGame', ['kb-control', 'color.picker']);
+angular.module('tetrisGame', ['ngAnimate', 'kb-control', 'color.picker']);
