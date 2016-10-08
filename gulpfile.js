@@ -12,7 +12,7 @@ gulp.task('useref', function(){
     // Minifies only if it's a CSS file
     .pipe(gulpIf('*.css', autoprefixer()))
     .pipe(gulpIf('*.css', cssnano()))
-    .pipe(gulp.dest('dist'))
+    .pipe(gulp.dest('docs'))
 });
 
 gulp.task('angular', function(){
