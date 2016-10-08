@@ -184,6 +184,20 @@ body {
   background: rgba(50, 50, 50, 0.77);
 }
 
+#ctrlLayer.ng-enter, #ctrlLayer.ng-leave {
+  transition: opacity .1s linear;
+}
+
+#ctrlLayer.ng-enter,
+#ctrlLayer.ng-leave.ng-leave-active {
+  opacity: 0;
+}
+
+#ctrlLayer.ng-leave,
+#ctrlLayer.ng-enter.ng-enter-active {
+  opacity: 1;
+}
+
 .module.overlay {
   box-shadow: 0 0 50px 10px black;
   position: absolute;
@@ -304,7 +318,7 @@ input {
 
 .main-button-wrapper {
   text-align: center;
-  margin: 25px;
+  margin: 20px;
 }
 
 .main-button-wrapper button {
