@@ -1,0 +1,19 @@
+// compileExpanded: ../css/$1.css
+
+@keyframes collapse {
+  0% {
+    background: white;
+    transform: scaleY(1);
+  }
+  90% {
+    background: transparent;
+    //transform: scaleY(0);
+  }
+  100% {transform: scaleY(1)}
+}
+
+@keyframes aboutToFix {
+  0% {opacity: 1}
+  70% {opacity: .5}
+  100% {opacity: 1}
+}

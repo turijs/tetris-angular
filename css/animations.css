@@ -1,0 +1,24 @@
+@keyframes collapse {
+  0% {
+    background: white;
+    transform: scaleY(1);
+  }
+  90% {
+    background: transparent;
+  }
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes aboutToFix {
+  0% {
+    opacity: 1;
+  }
+  70% {
+    opacity: .5;
+  }
+  100% {
+    opacity: 1;
+  }
+}

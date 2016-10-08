@@ -1,0 +1,34 @@
+{
+  "name": "tetris-angular",
+  "version": "1.0.0",
+  "description": "Tetris implemented with AngularJS",
+  "main": "index.html",
+  "dependencies": {
+    "angular": "^1.5.8",
+    "angularjs-color-picker": "^2.5.0"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^3.1.1",
+    "gulp-cssnano": "^2.1.2",
+    "gulp-if": "^2.0.1",
+    "gulp-uglify": "^2.0.0",
+    "gulp-useref": "^3.1.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/turijs/tetris-angular.git"
+  },
+  "author": "Turi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/turijs/tetris-angular/issues"
+  },
+  "homepage": "https://github.com/turijs/tetris-angular#readme",
+  "optionalDependencies": {
+    "angular-animate": "^1.5.8"
+  }
+}
