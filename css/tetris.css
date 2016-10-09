@@ -6,6 +6,7 @@
 body {
   font-family: Arial, sans-serif;
   font-family: "Lucida Console", Monaco, monospace;
+  font-size: 16px;
   background: #394347;
 }
 
@@ -140,6 +141,7 @@ body {
 .score-view {
   font-family: 'Bungee', sans-serif;
   font-size: 14px;
+  line-height: 20px;
 }
 
 .score-view p span {
@@ -204,6 +206,16 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  transform-origin: 0;
+}
+
+.module.overlay.ng-enter {
+  opacity: 0;
+  animation: fadein .2s ease .1s;
+}
+
+.module.overlay.ng-leave {
+  animation: fadeout .2s ease;
 }
 
 h1 {

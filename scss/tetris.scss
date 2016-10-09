@@ -12,6 +12,7 @@ $bgColor: rgb(38,38,38);
 body {
   font-family: Arial, sans-serif;
   font-family: "Lucida Console", Monaco, monospace;
+  font-size: 16px;
   background: rgb(57,67,71);
 }
 #game {
@@ -127,6 +128,7 @@ body {
 .score-view {
   font-family: 'Bungee', sans-serif;
   font-size: 14px;
+  line-height: 20px;
   p {
     span {
       font-size: 20px;
@@ -164,10 +166,21 @@ body {
 #ctrlLayer {
   position: absolute;
   top: 0; bottom:0; left: 0; right: 0;
+
+  // text-align: center;
+  // /* May want to do this if there is risk the container may be narrower than the element inside */
+  // white-space: nowrap;
+
   z-index: 200;
   background: rgba(50,50,50,.77);
-
 }
+// #ctrlLayer:before {/* facilitate vertical centering */
+//   content: '';
+//   display: inline-block;
+//   height: 100%;
+//   vertical-align: middle;
+//   margin-right: -0.25em; /* Adjusts for spacing */
+// }
 #ctrlLayer.ng-enter, #ctrlLayer.ng-leave {
   transition: opacity .1s linear;
 }
@@ -180,14 +193,24 @@ body {
 
 .module.overlay {
   box-shadow: 0 0 50px 10px black;
+
+  // white-space: normal;
+  // display: inline-block;
+  // vertical-align: middle;
+
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  transform-origin: 0;
 }
-// .module.overlay.ng-enter {
-//   animation: open .3s ease;
-// }
+.module.overlay.ng-enter {
+  opacity: 0;
+  animation: fadein .2s ease .1s;
+}
+.module.overlay.ng-leave {
+  animation: fadeout .2s ease;
+}
 
 h1 {
   text-align: center;
