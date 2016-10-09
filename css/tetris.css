@@ -141,6 +141,7 @@ body {
 .score-view {
   font-family: 'Bungee', sans-serif;
   font-size: 14px;
+  line-height: 20px;
 }
 
 .score-view p span {
