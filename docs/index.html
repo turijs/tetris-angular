@@ -16,8 +16,8 @@
 
     <div id="game" >
       <div id="ctrlWrap" ng-controller="gameControls">
-        <div id="ctrlLayer" class="fadein" ng-if="ui.state != 'game'" ng-switch="ui.state">
-          <div id="pause" class="module overlay" ng-switch-when="pause" kb-control="pause.kb">
+        <div id="ctrlLayer" class="_anim" ng-if="ui.state != 'game'" ng-switch="ui.state">
+          <div id="pause" class="module overlay _anim" ng-switch-when="pause" kb-control="pause.kb">
             <h1>{{pause.msg()}}</h1>
             <div class="score-view" ng-if="game.isEnded">
               <p>Score: <span>{{score.score}}</span></p>
@@ -29,7 +29,7 @@
             <button id="button-settings" class="cyan" ng-click="pause.settings()">Settings</button>
           </div>
 
-          <div id="settings" class="module overlay" ng-switch-when="settings" kb-control="newSettings.kb">
+          <div id="settings" class="module overlay _anim" ng-switch-when="settings" kb-control="newSettings.kb">
             <h1>Settings</h1>
             <div class="panel" id="board-size">
               <h2>Board Size</h2>
@@ -58,7 +58,7 @@
             </div>
           </div>
 
-          <div id="piece-editor" class="module overlay" ng-switch-when="pieceEditor" kb-control="pieceEditor.kb">
+          <div id="piece-editor" class="module overlay _anim" ng-switch-when="pieceEditor" kb-control="pieceEditor.kb">
             <h1>Piece Editor</h1>
             <div class="panel">
               <h2>Color</h2>
