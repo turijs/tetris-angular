@@ -51,12 +51,7 @@ body {
   width: $scale; height: $scale;
 
 }
-.row.cleared {
-  transition-delay: .5s;
-}
-.cleared .block {
-  animation: collapse .3s linear;
-}
+
 #BGGrid {
   position: relative;
   z-index: 50;
@@ -68,6 +63,14 @@ body {
 .row {
   position: absolute;
   transition: top .5s ease;
+  transition-delay: 0;
+}
+.row.cleared {
+  transition-delay: .5s;
+}
+.cleared .block {
+  animation: collapse .3s linear;
+  animation-delay: 0;
 }
 
 #BGGrid .block {
@@ -168,12 +171,10 @@ body {
 #ctrlLayer.ng-enter, #ctrlLayer.ng-leave {
   transition: opacity .1s linear;
 }
-#ctrlLayer.ng-enter,
-#ctrlLayer.ng-leave.ng-leave-active {
+#ctrlLayer.ng-enter, #ctrlLayer.ng-leave.ng-leave-active {
   opacity: 0;
 }
-#ctrlLayer.ng-leave,
-#ctrlLayer.ng-enter.ng-enter-active {
+#ctrlLayer.ng-leave, #ctrlLayer.ng-enter.ng-enter-active {
   opacity: 1;
 }
 
