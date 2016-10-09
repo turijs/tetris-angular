@@ -5,10 +5,12 @@ angular.module('tetrisGame').factory('faller', ['grid', '$timeout', function(gri
     this.source = piece;
     this.position = {x:Math.floor((grid.width - 1)/2), y:piece.topOffset};
     this.aboutToFix = false;
+    this.fixed = false;
     this.landAttempts = 0;
-    this.restart = true; //stop from sliding up to re-fall
+    //stop from sliding up to re-fall
+    this.restart = true;
       $timeout(function(){faller.restart = false;}, 20);
-    //////
+
     this.points = piece.points;
     this.color = piece.color;
     this.spread = piece.spread;
