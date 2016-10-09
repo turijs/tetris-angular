@@ -8,21 +8,21 @@ angular.module('tetrisGame').factory('gameManager', ['grid', 'faller', 'pieceMan
 
 
   game.left = function() {
-    if(game.findCollision( game.ghostFaller().moveLeft() ))
+    if(faller.fixed || game.findCollision( game.ghostFaller().moveLeft() ))
       return;
 
     faller.moveLeft();
     game.checkLanded();
   };
   game.right = function() {
-    if(game.findCollision( game.ghostFaller().moveRight() ))
+    if(faller.fixed || game.findCollision( game.ghostFaller().moveRight() ))
       return;
 
     faller.moveRight();
     game.checkLanded();
   };
   game.down = function(byGravity) {
-    if(game.findCollision( game.ghostFaller().moveDown() ))
+    if(faller.fixed || game.findCollision( game.ghostFaller().moveDown() ))
       return false;
 
     faller.moveDown();
@@ -35,6 +35,8 @@ angular.module('tetrisGame').factory('gameManager', ['grid', 'faller', 'pieceMan
     return true;
   };
   game.rot = function() {
+    if(faller.fixed) return;
+
     var normalRot = game.ghostFaller().rotateCW()
     if(!game.findCollision( normalRot )) {
       faller.rotateCW();
@@ -60,11 +62,14 @@ angular.module('tetrisGame').factory('gameManager', ['grid', 'faller', 'pieceMan
     }
     if(n > 0) {
       faller.moveDown(n);
+      faller.fixed = true;
       game.tick(300);
       score.hardDropped(n);
     }
   };
   game.hold = function() {
+    if(faller.fixed) return;
+
     faller.reFall(pieceManager.swapHoldPiece(faller.source));
   };
 
@@ -151,14 +156,18 @@ angular.module('tetrisGame').factory('gameManager', ['grid', 'faller', 'pieceMan
     if(this.findCollision( this.ghostFaller().moveDown() )) {
       faller.landAttempts++;
 
-      /* hacky, but we need to toggle this property with a slight delay so the
-      ** animation can restart. Would be nice to have a better method down the road */
-      faller.aboutToFix = false;
-      $timeout(function(){faller.aboutToFix = true}, 15);
-
       /* set a new timeout only if player is within allowed land attempts */
-      if(faller.landAttempts < 13)
+      if(faller.landAttempts < 13) {
+        /* hacky, but we need to toggle this property with a slight delay so the
+        ** animation can restart. Would be nice to have a better method down the road */
+        faller.aboutToFix = false;
+        $timeout(function(){faller.aboutToFix = true}, 15);
+
         this.tick(900);
+      } else {/* otherwise fix faller immediately */
+        this.tick();
+      }
+
     } else if(faller.aboutToFix) {
       /* faller was just about to land but is now no longer,
       ** so lets reset the timer to default tickspeed */
